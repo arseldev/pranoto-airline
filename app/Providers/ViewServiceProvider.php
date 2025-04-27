@@ -32,13 +32,15 @@ class ViewServiceProvider extends ServiceProvider
                     ['name' => 'Beranda', 'route' => route('home')],
                     ['name' => 'Informasi Publik', 'dropdown' => [
                         ['name' => 'Profil Bandara', 'route' => route('profilBandara')],
+                        ['name' => 'Struktur Organisasi', 'route' => route('strukturOrganisasi')],
                         ['name' => 'Profil PPID BLU', 'route' => route('profilPPID')],
                         ['name' => 'Pejabat Bandara', 'route' => route('pejabatBandara')],
                         ['name' => 'SOP PPID', 'route' => route('sopPpid')],
                         ['name' => 'Pengajuan Informasi Publik', 'route' => route('pengajuanInformasiPublik')],
-                    ]],
-                    ['name' => 'Informasi', 'dropdown' => [
-                        ['name' => 'Berita', 'route' => route('berita')],
+                        ]],
+                        ['name' => 'Informasi', 'dropdown' => [
+                            ['name' => 'Berita', 'route' => route('berita')],
+                            ['name' => 'Laporan Keuangan', 'route' => route('laporanKeuangan')],
                     ]],
                     ['name' => 'Layanan', 'dropdown' => [
                         ['name' => 'PAS', 'route' => 'https://aptpranoto.id/website/layanan/pas_orang.html'],

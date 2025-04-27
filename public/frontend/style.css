@@ -117,10 +117,10 @@ nav svg {
 }
 
 #navbar {
+  display: none;
   background-color: #EEF9FF;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   color: white;
-  display: none;
 }
 
 #navbar.scrolled {

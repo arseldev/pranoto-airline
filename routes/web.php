@@ -214,7 +214,10 @@ Route::group(["prefix" => 'dashboard'], function () {
 Route::get('/', [LandingPageController::class, 'home'])->name('home');
 Route::get('/informasi/berita', [LandingPageController::class, 'berita'])->name('berita');
 Route::get('/informasi/berita/{slug}', [LandingPageController::class, 'showNews'])->name('showNews');
+Route::get('/informasi/laporan-keuangan', [LandingPageController::class, 'laporanKeuangan'])->name('laporanKeuangan');
+
 Route::get('/informasi-publik/profil-bandara', [LandingPageController::class, 'profilBandara'])->name('profilBandara');
+Route::get('/informasi-publik/struktur-organisasi', [LandingPageController::class, 'strukturOrganisasi'])->name('strukturOrganisasi');
 Route::get('/informasi-publik/profil-ppid-blu', [LandingPageController::class, 'profilPPID'])->name('profilPPID');
 Route::get('/informasi-publik/pejabat-bandara', [LandingPageController::class, 'pejabatBandara'])->name('pejabatBandara');
 Route::get('/informasi-publik/sop-ppid', [LandingPageController::class, 'sopPpid'])->name('sopPpid');

@@ -15,25 +15,7 @@ class LandingPageController extends Controller
     {
         $sliders = Slider::where('is_visible_home', 1)->get();
 
-        $finances = Finance::selectRaw('
-            DATE_FORMAT(MIN(date), "%M %Y") as month,
-            SUM(CASE WHEN flow_type = "in" THEN amount ELSE 0 END) as pemasukan,
-            SUM(CASE WHEN flow_type = "out" THEN amount ELSE 0 END) as pengeluaran
-        ')
-        ->groupByRaw('YEAR(date), MONTH(date)')
-        ->orderByRaw('YEAR(date), MONTH(date)')
-        ->get();
-
-        // Grafik pertumbuhan keuangan
-        $labels = $finances->pluck('month');
-        $dataPemasukan = $finances->pluck('pemasukan');
-        $dataPengeluaran = $finances->pluck('pengeluaran');
-
-        // Pie chart total pemasukan vs pengeluaran
-        $totalPemasukan = Finance::where('flow_type', 'in')->sum('amount');
-        $totalPengeluaran = Finance::where('flow_type', 'out')->sum('amount');
-
-        return view('home', compact('sliders', 'labels', 'dataPemasukan', 'dataPengeluaran', 'totalPemasukan', 'totalPengeluaran'));
+        return view('home', compact('sliders'));
     }
 
     public function berita()
@@ -84,10 +66,32 @@ class LandingPageController extends Controller
         return view('navigation.informasi.berita.show', compact('news', 'latestArticles'));
     }
     public function profilBandara(){return view('navigation.informasi-publik.profil-bandara.index');}
+    public function strukturOrganisasi(){return view('navigation.informasi-publik.struktur-organisasi.index');}
     public function pejabatBandara(){return view('navigation.informasi-publik.pejabat-bandara.index');}
     public function profilPPID(){return view('navigation.informasi-publik.profil-ppid-blu.index');}
     public function sopPpid(){return view('navigation.informasi-publik.sop-ppid.index');}
     public function pengajuanInformasiPublik(){return view('navigation.informasi-publik.pengajuan-informasi-publik.index');}
+    public function laporanKeuangan(){
+        $finances = Finance::selectRaw('
+            DATE_FORMAT(MIN(date), "%M %Y") as month,
+            SUM(CASE WHEN flow_type = "in" THEN amount ELSE 0 END) as pemasukan,
+            SUM(CASE WHEN flow_type = "out" THEN amount ELSE 0 END) as pengeluaran
+        ')
+        ->groupByRaw('YEAR(date), MONTH(date)')
+        ->orderByRaw('YEAR(date), MONTH(date)')
+        ->get();
+
+        // Grafik pertumbuhan keuangan
+        $labels = $finances->pluck('month');
+        $dataPemasukan = $finances->pluck('pemasukan');
+        $dataPengeluaran = $finances->pluck('pengeluaran');
+
+        // Pie chart total pemasukan vs pengeluaran
+        $totalPemasukan = Finance::where('flow_type', 'in')->sum('amount');
+        $totalPengeluaran = Finance::where('flow_type', 'out')->sum('amount');
+
+        return view('navigation.informasi.laporan-keuangan.index', compact('labels', 'dataPemasukan', 'dataPengeluaran', 'totalPemasukan', 'totalPengeluaran'));
+    }
     
     public function storePengajuanInformasiPublik(Request $request)
     {
