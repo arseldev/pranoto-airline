@@ -19,6 +19,7 @@ class PermissionSeeder extends Seeder
             'Manajemen Field Trip',
             'Manajemen Laporan Keuangan',
             'Manajemen Slider',
+            'Manajemen Ajuan Informasi Publik',
         ];
 
         foreach ($permissions as $item) {

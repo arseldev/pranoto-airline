@@ -9,6 +9,8 @@ use App\Models\Flight;
 use App\Models\Plane;
 use App\Models\Ticket;
 use App\Models\User;
+use App\Models\Finance;
+use App\Models\Slider;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -37,6 +39,24 @@ class HomeController extends Controller
 
     public function root()
     {
+        $finances = Finance::selectRaw('
+            DATE_FORMAT(MIN(date), "%M %Y") as month,
+            SUM(CASE WHEN flow_type = "in" THEN amount ELSE 0 END) as pemasukan,
+            SUM(CASE WHEN flow_type = "out" THEN amount ELSE 0 END) as pengeluaran
+        ')
+        ->groupByRaw('YEAR(date), MONTH(date)')
+        ->orderByRaw('YEAR(date), MONTH(date)')
+        ->get();
+
+        // Grafik pertumbuhan keuangan
+        $labels = $finances->pluck('month');
+        $dataPemasukan = $finances->pluck('pemasukan');
+        $dataPengeluaran = $finances->pluck('pengeluaran');
+
+        // Pie chart total pemasukan vs pengeluaran
+        $totalPemasukan = Finance::where('flow_type', 'in')->sum('amount');
+        $totalPengeluaran = Finance::where('flow_type', 'out')->sum('amount');
+
         $totalAirline = Airline::count();
         $totalCustomer = User::whereIsAdmin(0)->count();
         $totalPlane = Plane::count();
@@ -87,7 +107,7 @@ class HomeController extends Controller
             "activeAirlines"    => $activeAirlines,
             "flightStatusChart" => $flightStatusChart,
         ];
-        return view('admin.index', compact('data'));
+        return view('admin.index', compact('data', 'labels', 'dataPemasukan', 'dataPengeluaran', 'totalPemasukan', 'totalPengeluaran'));
     }
 
     public function storeTempFile(Request $request)

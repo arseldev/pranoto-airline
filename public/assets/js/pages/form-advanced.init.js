@@ -1,4 +1,5 @@
 /******/ (function() { // webpackBootstrap
+var __webpack_exports__ = {};
 /*!**************************************************!*\
   !*** ./resources/js/pages/form-advanced.init.js ***!
   \**************************************************/
@@ -6,6 +7,7 @@
   "use strict";
 
   function e() {}
+
   e.prototype.init = function () {
     s(".select2").select2(), s(".select2-limiting").select2({
       maximumSelectionLength: 2
@@ -138,19 +140,19 @@
   "use strict";
 
   var c = $(".docs-date"),
-    o = $(".docs-datepicker-container"),
-    n = $(".docs-datepicker-trigger"),
-    r = {
-      show: function show(e) {
-        console.log(e.type, e.namespace);
-      },
-      hide: function hide(e) {
-        console.log(e.type, e.namespace);
-      },
-      pick: function pick(e) {
-        console.log(e.type, e.namespace, e.view);
-      }
-    };
+      o = $(".docs-datepicker-container"),
+      n = $(".docs-datepicker-trigger"),
+      r = {
+    show: function show(e) {
+      console.log(e.type, e.namespace);
+    },
+    hide: function hide(e) {
+      console.log(e.type, e.namespace);
+    },
+    pick: function pick(e) {
+      console.log(e.type, e.namespace, e.view);
+    }
+  };
   c.on({
     "show.datepicker": function showDatepicker(e) {
       console.log(e.type, e.namespace);
@@ -163,27 +165,32 @@
     }
   }).datepicker(r), $(".docs-options, .docs-toggles").on("change", function (e) {
     var t,
-      a = e.target,
-      i = $(a),
-      e = i.attr("name"),
-      s = "checkbox" === a.type ? a.checked : i.val();
+        a = e.target,
+        i = $(a),
+        e = i.attr("name"),
+        s = "checkbox" === a.type ? a.checked : i.val();
+
     switch (e) {
       case "container":
         s ? (s = o).show() : o.hide();
         break;
+
       case "trigger":
         s ? (s = n).prop("disabled", !1) : n.prop("disabled", !0);
         break;
+
       case "inline":
         (t = $('input[name="container"]')).prop("checked") || t.click();
         break;
+
       case "language":
         $('input[name="format"]').val($.fn.datepicker.languages[s].format);
     }
+
     r[e] = s, c.datepicker("reset").datepicker("destroy").datepicker(r);
   }), $(".docs-actions").on("click", "button", function (e) {
     var t = $(this).data(),
-      a = t.arguments || [];
+        a = t.arguments || [];
     e.stopPropagation(), t.method && (t.source ? c.datepicker(t.method, $(t.source).val()) : (a = c.datepicker(t.method, a[0], a[1], a[2])) && t.target && $(t.target).val(a));
   });
 });

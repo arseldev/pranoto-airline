@@ -1,47 +1,48 @@
 /******/ (function() { // webpackBootstrap
+var __webpack_exports__ = {};
 /*!*****************************************************!*\
   !*** ./resources/js/pages/crypto-dashboard.init.js ***!
   \*****************************************************/
 var options = {
-    series: [{
-      name: "BTC",
-      data: [12, 14, 2, 47, 42, 15, 47, 75, 65, 19, 14]
-    }],
-    chart: {
-      type: "area",
-      height: 40,
-      sparkline: {
-        enabled: !0
-      }
-    },
-    stroke: {
-      curve: "smooth",
-      width: 2
-    },
-    colors: ["#f1b44c"],
-    fill: {
-      type: "gradient",
-      gradient: {
-        shadeIntensity: 1,
-        inverseColors: !1,
-        opacityFrom: .45,
-        opacityTo: .05,
-        stops: [25, 100, 100, 100]
-      }
-    },
-    tooltip: {
-      fixed: {
-        enabled: !1
-      },
-      x: {
-        show: !1
-      },
-      marker: {
-        show: !1
-      }
+  series: [{
+    name: "BTC",
+    data: [12, 14, 2, 47, 42, 15, 47, 75, 65, 19, 14]
+  }],
+  chart: {
+    type: "area",
+    height: 40,
+    sparkline: {
+      enabled: !0
     }
   },
-  chart = new ApexCharts(document.querySelector("#area-sparkline-chart-1"), options);
+  stroke: {
+    curve: "smooth",
+    width: 2
+  },
+  colors: ["#f1b44c"],
+  fill: {
+    type: "gradient",
+    gradient: {
+      shadeIntensity: 1,
+      inverseColors: !1,
+      opacityFrom: .45,
+      opacityTo: .05,
+      stops: [25, 100, 100, 100]
+    }
+  },
+  tooltip: {
+    fixed: {
+      enabled: !1
+    },
+    x: {
+      show: !1
+    },
+    marker: {
+      show: !1
+    }
+  }
+},
+    chart = new ApexCharts(document.querySelector("#area-sparkline-chart-1"), options);
 chart.render();
 options = {
   series: [{
@@ -240,12 +241,14 @@ options = {
   }
 };
 (chart = new ApexCharts(document.querySelector("#overview-chart-timeline"), options)).render();
+
 var resetCssClasses = function resetCssClasses(e) {
   var t = document.querySelectorAll("button");
   Array.prototype.forEach.call(t, function (e) {
     e.classList.remove("active");
   }), e.target.classList.add("active");
 };
+
 document.querySelector("#one_month").addEventListener("click", function (e) {
   resetCssClasses(e), chart.updateOptions({
     xaxis: {

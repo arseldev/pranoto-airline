@@ -1,32 +1,33 @@
 /******/ (function() { // webpackBootstrap
+var __webpack_exports__ = {};
 /*!*******************************************!*\
   !*** ./resources/js/pages/toastr.init.js ***!
   \*******************************************/
 var toastTrigger = document.getElementById("liveToastBtn"),
-  toastLiveExample = document.getElementById("liveToast");
+    toastLiveExample = document.getElementById("liveToast");
 toastTrigger && toastTrigger.addEventListener("click", function () {
   new bootstrap.Toast(toastLiveExample).show();
 }), $(function () {
   var m,
-    g = -1,
-    k = 0;
+      g = -1,
+      k = 0;
   $("#closeButton").click(function () {
     $(this).is(":checked") ? $("#addBehaviorOnToastCloseClick").prop("disabled", !1) : ($("#addBehaviorOnToastCloseClick").prop("disabled", !0), $("#addBehaviorOnToastCloseClick").prop("checked", !1));
   }), $("#showtoast").click(function () {
     var t,
-      o = $("#toastTypeGroup input:radio:checked").val(),
-      e = $("#message").val(),
-      a = $("#title").val() || "",
-      n = $("#showDuration"),
-      s = $("#hideDuration"),
-      i = $("#timeOut"),
-      r = $("#extendedTimeOut"),
-      l = $("#showEasing"),
-      c = $("#hideEasing"),
-      p = $("#showMethod"),
-      d = $("#hideMethod"),
-      h = k++,
-      u = $("#addClear").prop("checked");
+        o = $("#toastTypeGroup input:radio:checked").val(),
+        e = $("#message").val(),
+        a = $("#title").val() || "",
+        n = $("#showDuration"),
+        s = $("#hideDuration"),
+        i = $("#timeOut"),
+        r = $("#extendedTimeOut"),
+        l = $("#showEasing"),
+        c = $("#hideEasing"),
+        p = $("#showMethod"),
+        d = $("#hideMethod"),
+        h = k++,
+        u = $("#addClear").prop("checked");
     toastr.options = {
       closeButton: $("#closeButton").prop("checked"),
       debug: $("#debugInfo").prop("checked"),

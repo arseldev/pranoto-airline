@@ -19,6 +19,7 @@
             'Manajemen Field Trip' => ['route' => 'fieldtrip.staffIndex', 'icon' => 'bx bx-walk', 'label' => 'Field Trip'],
             'Manajemen Laporan Keuangan' => ['route' => 'keuangan.staffIndex', 'icon' => 'bx bx-money', 'label' => 'Laporan Keuangan'],
             'Manajemen Slider' => ['route' => 'slider.staffIndex', 'icon' => 'bx bx-slider', 'label' => 'Slider'],
+            'Manajemen Ajuan Informasi Publik' => ['route' => 'informasiPublik.staffIndex', 'icon' => 'bx bx-info-circle', 'label' => 'Informasi Publik'],
           ];
           $userRoutes = [
             'Ajukan Tenant' => ['route' => 'tenant.index', 'icon' => 'bx bx-store', 'label' => 'Ajukan Tenant'],

@@ -19,6 +19,29 @@ class NewsController extends Controller
         $news = News::where('slug', $slug)->firstOrFail();
         return view('user_staff.berita.show', compact('news'));
     }
+    public function update(Request $request, $slug)
+    {
+        $news = News::where('slug', $slug)->firstOrFail();
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $news->title = $request->title;
+        $news->content = $request->content;
+
+        if ($request->hasFile('image')) {
+            $imageName = time() . '.' . $request->image->extension();
+            $request->image->move(public_path('uploads'), $imageName);
+            $news->image = $imageName;
+        }
+
+        $news->save();
+
+        return redirect()->route('berita.staffIndex')->with('success', 'Berita berhasil diperbarui.');
+    }
 
     public function create()
     {
@@ -30,16 +53,17 @@ class NewsController extends Controller
         $request->validate([
             'title'     => 'required|unique:news,title|string|max:255',
             'content'   => 'required|string',
-            'image'     => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+            'image'     => 'required|file|mimes:jpg,jpeg,png|max:2048',
         ], [
-            'title.required'   => 'Judul berita wajib diisi.',
-            'title.string'     => 'Judul berita harus berupa teks.',
-            'title.max'        => 'Judul berita maksimal 255 karakter.',
-            'title.unique'     => 'Judul berita tidak boleh sama dengan berita lainnya.',
+            'title.required'    => 'Judul berita wajib diisi.',
+            'title.string'      => 'Judul berita harus berupa teks.',
+            'title.max'         => 'Judul berita maksimal 255 karakter.',
+            'title.unique'      => 'Judul berita tidak boleh sama dengan berita lainnya.',
 
-            'content.required' => 'Konten berita wajib diisi.',
-            'content.string'   => 'Konten berita harus berupa teks.',
-
+            'content.required'  => 'Konten berita wajib diisi.',
+            'content.string'    => 'Konten berita harus berupa teks.',
+            
+            'image.required'    => 'Gambar berita wajib diisi.',
             'image.file'        => 'File gambar tidak valid.',
             'image.mimes'       => 'Gambar harus berupa JPG/PNG.',
             'image.max'         => 'Ukuran gambar maksimal 2MB.',
@@ -95,6 +119,6 @@ class NewsController extends Controller
         $news->is_published = $request->input('is_published');
         $news->save();
 
-        return back()->with('success', 'Berita dipublish.');
+        return back()->with('success', 'Status publish diperbarui.');
     }
 }

@@ -1,4 +1,5 @@
 /******/ (function() { // webpackBootstrap
+var __webpack_exports__ = {};
 /*!***************************************************!*\
   !*** ./resources/js/pages/calendars-full.init.js ***!
   \***************************************************/
@@ -9,11 +10,11 @@ Website: https://themesbrand.com/
 Contact: themesbrand@gmail.com
 File: Calendar init js
 */
-
 !function ($) {
   "use strict";
 
   var CalendarPage = function CalendarPage() {};
+
   CalendarPage.prototype.init = function () {
     var addEvent = $("#event-modal");
     var modalTitle = $("#modal-title");
@@ -31,8 +32,8 @@ File: Calendar init js
     var m = date.getMonth();
     var y = date.getFullYear();
     var Draggable = FullCalendar.Draggable;
-    var externalEventContainerEl = document.getElementById('external-events');
-    // init dragable
+    var externalEventContainerEl = document.getElementById('external-events'); // init dragable
+
     new Draggable(externalEventContainerEl, {
       itemSelector: '.external-event',
       eventData: function eventData(eventEl) {
@@ -88,6 +89,7 @@ File: Calendar init js
     }];
     var draggableEl = document.getElementById('external-events');
     var calendarEl = document.getElementById('calendar');
+
     function addNewEvent(info) {
       addEvent.modal('show');
       formEvent.removeClass("was-validated");
@@ -97,6 +99,7 @@ File: Calendar init js
       modalTitle.text('Add Event');
       newEventData = info;
     }
+
     function getInitialView() {
       if (window.innerWidth >= 768 && window.innerWidth < 1200) {
         return 'timeGridWeek';
@@ -106,6 +109,7 @@ File: Calendar init js
         return 'dayGridMonth';
       }
     }
+
     var calendar = new FullCalendar.Calendar(calendarEl, {
       editable: true,
       droppable: true,
@@ -120,10 +124,10 @@ File: Calendar init js
       eventDidMount: function eventDidMount(info) {
         if (info.event.extendedProps.status === 'done') {
           // Change background color of row
-          info.el.style.backgroundColor = 'red';
+          info.el.style.backgroundColor = 'red'; // Change color of dot marker
 
-          // Change color of dot marker
           var dotEl = info.el.getElementsByClassName('fc-event-dot')[0];
+
           if (dotEl) {
             dotEl.style.backgroundColor = 'white';
           }
@@ -150,7 +154,6 @@ File: Calendar init js
       events: defaultEvents
     });
     calendar.render();
-
     /*Add new event*/
     // Form to add new event
 
@@ -158,9 +161,8 @@ File: Calendar init js
       ev.preventDefault();
       var inputs = $('#form-event :input');
       var updatedTitle = $("#event-title").val();
-      var updatedCategory = $('#event-category').val();
+      var updatedCategory = $('#event-category').val(); // validation
 
-      // validation
       if (forms[0].checkValidity() === false) {
         // event.preventDefault();
         // event.stopPropagation();
@@ -178,6 +180,7 @@ File: Calendar init js
           };
           calendar.addEvent(newEvent);
         }
+
         addEvent.modal('hide');
       }
     });
@@ -194,11 +197,9 @@ File: Calendar init js
         allDay: true
       });
     });
-  },
-  //init
+  }, //init
   $.CalendarPage = new CalendarPage(), $.CalendarPage.Constructor = CalendarPage;
-}(window.jQuery),
-//initializing 
+}(window.jQuery), //initializing 
 function ($) {
   "use strict";
 

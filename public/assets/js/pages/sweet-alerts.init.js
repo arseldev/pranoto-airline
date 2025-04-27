@@ -1,4 +1,5 @@
 /******/ (function() { // webpackBootstrap
+var __webpack_exports__ = {};
 /*!*************************************************!*\
   !*** ./resources/js/pages/sweet-alerts.init.js ***!
   \*************************************************/
@@ -6,6 +7,7 @@
   "use strict";
 
   function e() {}
+
   e.prototype.init = function () {
     t("#sa-basic").on("click", function () {
       Swal.fire({

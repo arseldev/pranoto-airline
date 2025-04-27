@@ -8,84 +8,84 @@
 /***/ (function() {
 
 var options = {
-    chart: {
-      height: 380,
-      type: "line",
-      zoom: {
-        enabled: !1
-      },
-      toolbar: {
-        show: !1
-      }
-    },
-    colors: ["#556ee6", "#34c38f"],
-    dataLabels: {
+  chart: {
+    height: 380,
+    type: "line",
+    zoom: {
       enabled: !1
     },
-    stroke: {
-      width: [3, 3],
-      curve: "straight"
+    toolbar: {
+      show: !1
+    }
+  },
+  colors: ["#556ee6", "#34c38f"],
+  dataLabels: {
+    enabled: !1
+  },
+  stroke: {
+    width: [3, 3],
+    curve: "straight"
+  },
+  series: [{
+    name: "High - 2018",
+    data: [26, 24, 32, 36, 33, 31, 33]
+  }, {
+    name: "Low - 2018",
+    data: [14, 11, 16, 12, 17, 13, 12]
+  }],
+  title: {
+    text: "Average High & Low Temperature",
+    align: "left",
+    style: {
+      fontWeight: "500"
+    }
+  },
+  grid: {
+    row: {
+      colors: ["transparent", "transparent"],
+      opacity: .2
     },
-    series: [{
-      name: "High - 2018",
-      data: [26, 24, 32, 36, 33, 31, 33]
-    }, {
-      name: "Low - 2018",
-      data: [14, 11, 16, 12, 17, 13, 12]
-    }],
+    borderColor: "#f1f1f1"
+  },
+  markers: {
+    style: "inverted",
+    size: 6
+  },
+  xaxis: {
+    categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
     title: {
-      text: "Average High & Low Temperature",
-      align: "left",
-      style: {
-        fontWeight: "500"
-      }
+      text: "Month"
+    }
+  },
+  yaxis: {
+    title: {
+      text: "Temperature"
     },
-    grid: {
-      row: {
-        colors: ["transparent", "transparent"],
-        opacity: .2
-      },
-      borderColor: "#f1f1f1"
-    },
-    markers: {
-      style: "inverted",
-      size: 6
-    },
-    xaxis: {
-      categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
-      title: {
-        text: "Month"
-      }
-    },
-    yaxis: {
-      title: {
-        text: "Temperature"
-      },
-      min: 5,
-      max: 40
-    },
-    legend: {
-      position: "top",
-      horizontalAlign: "right",
-      floating: !0,
-      offsetY: -25,
-      offsetX: -5
-    },
-    responsive: [{
-      breakpoint: 600,
-      options: {
-        chart: {
-          toolbar: {
-            show: !1
-          }
-        },
-        legend: {
+    min: 5,
+    max: 40
+  },
+  legend: {
+    position: "top",
+    horizontalAlign: "right",
+    floating: !0,
+    offsetY: -25,
+    offsetX: -5
+  },
+  responsive: [{
+    breakpoint: 600,
+    options: {
+      chart: {
+        toolbar: {
           show: !1
         }
+      },
+      legend: {
+        show: !1
       }
-    }]
-  },
-  chart = new ApexCharts(document.querySelector("#line_chart_datalabel"), options);
+    }
+  }]
+},
+    chart = new ApexCharts(document.querySelector("#line_chart_datalabel"), options);
 chart.render();
 options = {
   chart: {
@@ -546,10 +546,23 @@ options = {
 
 /***/ }),
 
-/***/ "./resources/scss/app-dark.scss":
-/*!**************************************!*\
-  !*** ./resources/scss/app-dark.scss ***!
-  \**************************************/
+/***/ "./resources/scss/bootstrap.scss":
+/*!***************************************!*\
+  !*** ./resources/scss/bootstrap.scss ***!
+  \***************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
+/***/ "./resources/scss/icons.scss":
+/*!***********************************!*\
+  !*** ./resources/scss/icons.scss ***!
+  \***********************************/
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -585,23 +598,10 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/scss/bootstrap.scss":
-/*!***************************************!*\
-  !*** ./resources/scss/bootstrap.scss ***!
-  \***************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-
-/***/ }),
-
-/***/ "./resources/scss/icons.scss":
-/*!***********************************!*\
-  !*** ./resources/scss/icons.scss ***!
-  \***********************************/
+/***/ "./resources/scss/app-dark.scss":
+/*!**************************************!*\
+  !*** ./resources/scss/app-dark.scss ***!
+  \**************************************/
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -741,7 +741,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 				if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
 /******/ 					installedChunks[chunkId][0]();
 /******/ 				}
-/******/ 				installedChunks[chunkId] = 0;
+/******/ 				installedChunks[chunkIds[i]] = 0;
 /******/ 			}
 /******/ 			return __webpack_require__.O(result);
 /******/ 		}

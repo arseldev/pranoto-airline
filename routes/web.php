@@ -24,10 +24,14 @@ use App\Http\Controllers\Staff_User\{
     SewaLahanController,
     SliderController,
     TenantController,
+    InformasiPublikController,
 };
 
-use App\Http\Controllers\SandboxController;
-use App\Http\Controllers\SidebarControler;
+use App\Http\Controllers\{
+    LandingPageController,
+    SandboxController,
+    SidebarControler,
+};
 
 Auth::routes();
 
@@ -71,6 +75,7 @@ Route::group(["prefix" => 'dashboard'], function () {
             Route::get('staff/berita/create', [NewsController::class, 'create'])->name('berita.create');
             Route::get('staff/berita/{slug}', [NewsController::class, 'show'])->name('berita.show');
             Route::post('staff/berita/store', [NewsController::class, 'store'])->name('berita.store');
+            Route::delete('staff/berita/{id}/update', [NewsController::class, 'update'])->name('berita.update');
             Route::delete('staff/berita/{id}/destroy', [NewsController::class, 'destroy'])->name('berita.destroy');
             Route::patch('staff/berita/{id}/toggle-headline', [NewsController::class, 'toggleHeadline'])->name('berita.toggleHeadline');
             Route::patch('staff/berita/{id}/toggle-publish', [NewsController::class, 'togglePublish'])->name('berita.togglePublish');
@@ -114,8 +119,14 @@ Route::group(["prefix" => 'dashboard'], function () {
             Route::patch('staff/slider/{id}/toggle-visibility-home', [SliderController::class, 'toggleVisibilityHome'])->name('slider.toggleVisibilityHome');
             Route::patch('staff/slider/{id}/toggle-visibility-footer', [SliderController::class, 'toggleVisibilityFooter'])->name('slider.toggleVisibilityFooter');
             
-            // Report Staff Routes
+            // Finance Report Staff Routes
             Route::get('staff/keuangan', [LaporanKeuanganController::class, 'index'])->name('keuangan.staffIndex');
+            Route::get('staff/keuangan/create', [LaporanKeuanganController::class, 'create'])->name('keuangan.create');
+            Route::post('staff/keuangan/store', [LaporanKeuanganController::class, 'store'])->name('keuangan.store');
+            
+            // Public Information Staff Routes
+            Route::get('staff/informasi-publik', [InformasiPublikController::class, 'index'])->name('informasiPublik.staffIndex');
+            Route::get('staff/informasi-publik/{id}', [InformasiPublikController::class, 'show'])->name('informasiPublik.show');
         });
 
 
@@ -200,7 +211,15 @@ Route::group(["prefix" => 'dashboard'], function () {
 });
 
 
-Route::get('/', [HomeController::class, 'home'])->name('home');
+Route::get('/', [LandingPageController::class, 'home'])->name('home');
+Route::get('/informasi/berita', [LandingPageController::class, 'berita'])->name('berita');
+Route::get('/informasi/berita/{slug}', [LandingPageController::class, 'showNews'])->name('showNews');
+Route::get('/informasi-publik/profil-bandara', [LandingPageController::class, 'profilBandara'])->name('profilBandara');
+Route::get('/informasi-publik/profil-ppid-blu', [LandingPageController::class, 'profilPPID'])->name('profilPPID');
+Route::get('/informasi-publik/pejabat-bandara', [LandingPageController::class, 'pejabatBandara'])->name('pejabatBandara');
+Route::get('/informasi-publik/sop-ppid', [LandingPageController::class, 'sopPpid'])->name('sopPpid');
+Route::get('/informasi-publik/pengajuan-informasi-publik', [LandingPageController::class, 'pengajuanInformasiPublik'])->name('pengajuanInformasiPublik');
+Route::post('/informasi-publik/pengajuan-informasi-publik', [LandingPageController::class, 'storePengajuanInformasiPublik'])->name('storePengajuanInformasiPublik');
 
 //Language Translation
 Route::get('/index/{locale}', [HomeController::class, 'lang']);

@@ -10,7 +10,17 @@ return new class extends Migration
     {
         Schema::create('finances', function (Blueprint $table) {
             $table->id();
+
+            $table->date('date'); 
+            $table->enum('flow_type', ['in', 'out']); 
+            $table->unsignedInteger('amount'); 
+            $table->text('note')->nullable(); 
+        
             $table->timestamps();
         });
+    }
+    public function down(): void
+    {
+        Schema::dropIfExists('finances');
     }
 };

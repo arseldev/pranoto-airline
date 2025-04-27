@@ -1,144 +1,108 @@
 @extends('layouts.master')
 
 @section('title')
-  Pengajuan Tenant
+  Laporan Keuangan
 @endsection
 
 @section('content')
   @component('components.breadcrumb')
-    @slot('li_1') Tenant @endslot
-    @slot('title') Pengajuan Tenant @endslot
+    @slot('li_1') Keuangan @endslot
+    @slot('title') Laporan Keuangan @endslot
   @endcomponent
+
   @if(session('success'))
     <div class="alert alert-success">
         {{ session('success') }}
     </div>
   @endif
+
   <div class="row">
     <div class="col-xl-12">
-      
-
       <div class="card">
         <div class="card-body">
-
           <div class="row">
             <div class="col-12">
               <div class="card">
                 <div class="card-header d-flex justify-content-between bg-transparent">
-                  <h4 class="card-title">Daftar Pengajuan</h4>
-                  @notadmin
-                    @notstaff
-                      <a href='{{ route("tenant.create") }}' class="btn btn-success btn-sm">+ Tambah Pengajuan</a>
-                    @endnotstaff
-                  @endnotadmin
+                  <h4 class="card-title">Daftar Laporan Keuangan</h4>
                 </div>
+
+                <div class="card-header d-flex justify-content-between bg-transparent">
+                  <form action="{{ route('keuangan.index') }}" method="GET">
+                    <div class="d-flex gap-3">
+
+                        <!-- Filter Tahun -->
+                        <div>
+                            <label for="year" class="form-label">Filter Tahun</label>
+                            <select name="year" id="year" class="form-control pe-5">
+                                <option value="">Semua Tahun</option>
+                                @foreach($years as $year)
+                                  <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>{{ $year }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Filter Jenis Aliran Dana -->
+                        <div>
+                            <label for="filter" class="form-label">Filter Arus Dana</label>
+                            <select name="filter" id="filter" class="form-control pe-5">
+                                <option value="">Semua</option>
+                                <option value="in" {{ request('filter') == 'in' ? 'selected' : '' }}>Pemasukan</option>
+                                <option value="out" {{ request('filter') == 'out' ? 'selected' : '' }}>Pengeluaran</option>
+                            </select>
+                        </div>
+
+                    </div>
+                    <div class="mt-2">
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                    </div>
+                  </form>
+
+                  <div class="d-flex align-items-end">
+                    <a href="{{ route('keuangan.create') }}" class="btn btn-success btn-sm">+ Tambah Laporan Keuangan</a>
+                  </div>
+                </div>
+
                 <div class="card-body">
-                  <table id="submission-table" class="table table-bordered table-hover">
+                  <table class="table table-bordered">
                     <thead>
                       <tr>
-                        <th>#</th>
-                        <th>Nama File Pengajuan</th>
-                        <th>Dibuat</th>
-                        <th>Status</th>
-                        @staff
-                        <th>Pemilik</th>
-                        @endstaff
-                        <th>Aksi</th>
+                        <th>No</th>
+                        <th>Tanggal</th>
+                        <th>Jenis</th>
+                        <th>Jumlah</th>
+                        <th>Catatan</th>
+                        <th>Dibuat pada</th>
                       </tr>
                     </thead>
-                    @notadmin
-                      @notstaff
-                        <tbody>
-                          @forelse ($tenants as $index => $tenant)
-                            <tr>
-                              <td>{{ $index + 1 }}</td>
-                              <td>{{ $tenant->documents ? preg_replace('/^\d+_/', '', basename($tenant->documents)) : '-' }}</td>
-                              <td>{{ $tenant->created_at->format('d M Y H:i') }}</td>
-                              <td>
-                                @php
-                                  $status = $tenant->submission_status;
-                                  $badgeClass = match($status) {
-                                      'disetujui' => 'bg-success',
-                                      'ditolak' => 'bg-danger',
-                                      default => 'bg-info',
-                                  };
-                                @endphp
-                                <span class="badge {{ $badgeClass }}">{{ ucfirst($status) }}</span>
-                              </td>                          
-                              <td>
-                                @if ($tenant->documents)
-                                  <div class="row">
-                                    <form class="col">
-                                      <a href="{{ asset('uploads/documents/tenant/' . basename($tenant->documents)) }}" class="btn btn-sm btn-primary w-100" target="_blank">Lihat Berkas</a>
-                                    </form>
-                                    @if ($tenant->submission_status == 'diajukan')
-                                      <form class="col" action="{{ route('tenant.destroy', $tenant->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus pengajuan ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm w-100">Hapus pengajuan</button>
-                                      </form>
-                                    @endif
-                                  </div>
-                                @else
-                                  <span class="text-muted">Tidak ada berkas</span>
-                                @endif
-                              </td>
-                            </tr>
-                          @empty
-                            <tr>
-                              <td colspan="4" class="text-center">Belum ada pengajuan tenant</td>
-                            </tr>
-                          @endforelse
-                        </tbody>
-                      @endnotstaff
-                    @endnotadmin
-                    
-                    @staff
-                      <tbody>
-                        @forelse ($tenants as $index => $tenant)
-                          <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $tenant->documents ? preg_replace('/^\d+_/', '', basename($tenant->documents)) : '-' }}</td>
-                            <td>{{ $tenant->created_at->format('d M Y H:i') }}</td>
-                            <td>
-                              @php
-                                $status = $tenant->submission_status;
-                                $badgeClass = match($status) {
-                                    'disetujui' => 'bg-success',
-                                    'ditolak' => 'bg-danger',
-                                    default => 'bg-info',
-                                };
-                              @endphp
-                              <span class="badge {{ $badgeClass }}">{{ ucfirst($status) }}</span>
-                            </td>
-                            <td>
-                              @foreach ($tenant->users as $user)
-                                <span class="badge bg-secondary">{{ $user->name }}</span>
-                              @endforeach
-                            </td>
-                            <td>
-                              <div class="row g-1">
-                                <div class="col-12 mb-1">
-                                  <a href="{{ route('tenant.show', $tenant->id) }}" class="btn btn-sm btn-primary w-100">
-                                    Lihat
-                                  </a>
-                                </div>
-                              </div>
-                            </td>
-                          </tr>
-                        @empty
-                          <tr>
-                            <td colspan="4" class="text-center">Belum ada pengajuan tenant</td>
-                          </tr>
-                        @endforelse
-                      </tbody>
-                    @endstaff
+                    <tbody>
+                      @forelse ($finances as $index => $finance)
+                        <tr>
+                          <td>{{ $index + 1 }}</td>
+                          <td>{{ \Carbon\Carbon::parse($finance->date)->format('d M Y') }}</td>
+                          <td>
+                            @if($finance->flow_type === 'in')
+                              <span class="badge bg-success">Pemasukan</span>
+                            @else
+                              <span class="badge bg-danger">Pengeluaran</span>
+                            @endif
+                          </td>
+                          <td>Rp {{ number_format($finance->amount, 0, ',', '.') }}</td>
+                          <td>{{ $finance->note ?? '-' }}</td>
+                          <td>{{ $finance->created_at->format('d M Y') }}</td>
+                        </tr>
+                      @empty
+                        <tr>
+                          <td colspan="6" class="text-center">Data tidak tersedia.</td>
+                        </tr>
+                      @endforelse
+                    </tbody>
                   </table>
                 </div>
+
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -146,7 +110,7 @@
 @endsection
 
 @section('script')
-  <script>
-
-  </script>
+<script>
+  // Inisialisasi table jika pakai plugin seperti DataTables
+</script>
 @endsection

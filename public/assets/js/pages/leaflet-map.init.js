@@ -1,4 +1,5 @@
 /******/ (function() { // webpackBootstrap
+var __webpack_exports__ = {};
 /*!************************************************!*\
   !*** ./resources/js/pages/leaflet-map.init.js ***!
   \************************************************/
@@ -42,27 +43,29 @@ L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
   fillColor: "#556ee6"
 }).addTo(popupmap).bindPopup("I am a polygon.");
 var popup = L.popup(),
-  customiconsmap = L.map("leaflet-map-custom-icons").setView([51.5, -.09], 13);
+    customiconsmap = L.map("leaflet-map-custom-icons").setView([51.5, -.09], 13);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(customiconsmap);
 var LeafIcon = L.Icon.extend({
-    options: {
-      iconSize: [45, 95],
-      iconAnchor: [22, 94],
-      popupAnchor: [-3, -76]
-    }
-  }),
-  greenIcon = new LeafIcon({
-    iconUrl: "assets/images/logo.svg"
-  });
+  options: {
+    iconSize: [45, 95],
+    iconAnchor: [22, 94],
+    popupAnchor: [-3, -76]
+  }
+}),
+    greenIcon = new LeafIcon({
+  iconUrl: "assets/images/logo.svg"
+});
 L.marker([51.5, -.09], {
   icon: greenIcon
 }).addTo(customiconsmap);
 var interactivemap = L.map("leaflet-map-interactive-map").setView([37.8, -96], 4);
+
 function getColor(e) {
   return 1e3 < e ? "#435fe3" : 500 < e ? "#556ee6" : 200 < e ? "#677de9" : 100 < e ? "#798ceb" : 50 < e ? "#8a9cee" : 20 < e ? "#9cabf0" : 10 < e ? "#aebaf3" : "#c0c9f6";
 }
+
 function style(e) {
   return {
     weight: 2,
@@ -73,6 +76,7 @@ function style(e) {
     fillColor: getColor(e.properties.density)
   };
 }
+
 L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw", {
   maxZoom: 18,
   attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -81,36 +85,36 @@ L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
   zoomOffset: -1
 }).addTo(interactivemap);
 var geojson = L.geoJson(statesData, {
-    style: style
-  }).addTo(interactivemap),
-  cities = L.layerGroup();
+  style: style
+}).addTo(interactivemap),
+    cities = L.layerGroup();
 L.marker([39.61, -105.02]).bindPopup("This is Littleton, CO.").addTo(cities), L.marker([39.74, -104.99]).bindPopup("This is Denver, CO.").addTo(cities), L.marker([39.73, -104.8]).bindPopup("This is Aurora, CO.").addTo(cities), L.marker([39.77, -105.23]).bindPopup("This is Golden, CO.").addTo(cities);
 var mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-  mbUrl = "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw",
-  grayscale = L.tileLayer(mbUrl, {
-    id: "mapbox/light-v9",
-    tileSize: 512,
-    zoomOffset: -1,
-    attribution: mbAttr
-  }),
-  streets = L.tileLayer(mbUrl, {
-    id: "mapbox/streets-v11",
-    tileSize: 512,
-    zoomOffset: -1,
-    attribution: mbAttr
-  }),
-  layergroupcontrolmap = L.map("leaflet-map-group-control", {
-    center: [39.73, -104.99],
-    zoom: 10,
-    layers: [streets, cities]
-  }),
-  baseLayers = {
-    Grayscale: grayscale,
-    Streets: streets
-  },
-  overlays = {
-    Cities: cities
-  };
+    mbUrl = "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw",
+    grayscale = L.tileLayer(mbUrl, {
+  id: "mapbox/light-v9",
+  tileSize: 512,
+  zoomOffset: -1,
+  attribution: mbAttr
+}),
+    streets = L.tileLayer(mbUrl, {
+  id: "mapbox/streets-v11",
+  tileSize: 512,
+  zoomOffset: -1,
+  attribution: mbAttr
+}),
+    layergroupcontrolmap = L.map("leaflet-map-group-control", {
+  center: [39.73, -104.99],
+  zoom: 10,
+  layers: [streets, cities]
+}),
+    baseLayers = {
+  Grayscale: grayscale,
+  Streets: streets
+},
+    overlays = {
+  Cities: cities
+};
 L.control.layers(baseLayers, overlays).addTo(layergroupcontrolmap);
 /******/ })()
 ;

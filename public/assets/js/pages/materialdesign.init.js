@@ -1,20 +1,24 @@
 /******/ (function() { // webpackBootstrap
+var __webpack_exports__ = {};
 /*!***************************************************!*\
   !*** ./resources/js/pages/materialdesign.init.js ***!
   \***************************************************/
 function isNew(e) {
   return "5.8.55" === e.version;
 }
+
 function isDeprecated(e) {
   return void 0 !== e.deprecated && e.deprecated;
 }
+
 function getIconItem(e, n) {
   var o = document.createElement("div"),
-    a = document.createElement("i");
+      a = document.createElement("i");
   o.className = "col-xl-3 col-lg-4 col-sm-6", a.className = "mdi mdi-" + e.name, o.appendChild(a);
   a = document.createElement("span");
   return a.appendChild(document.createTextNode("mdi-" + e.name)), o.appendChild(a), o;
 }
+
 !function () {
   var e = [{
     name: "ab-testing",

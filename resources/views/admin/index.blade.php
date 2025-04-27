@@ -18,258 +18,24 @@
       Dashboard
     @endslot
   @endcomponent
-  <div class="row">
-    <div class="col-xl-12">
-      <div class="row">
-        <div class="col-md-4">
-          <div class="card mini-stats-wid">
-            <div class="card-body">
-              <div class="d-flex">
-                <div class="flex-grow-1">
-                  <p class="text-muted fw-medium">@lang('translation.dashboard.total_airline')</p>
-                  <h4 class="mb-0">{{ $data['totalAirline'] }}</h4>
-                </div>
-
-                <div class="align-self-center flex-shrink-0">
-                  <div class="mini-stat-icon avatar-sm rounded-circle bg-primary">
-                    <span class="avatar-title">
-                      <i class='bx bx-globe font-size-24'></i>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card mini-stats-wid">
-            <div class="card-body">
-              <div class="d-flex">
-                <div class="flex-grow-1">
-                  <p class="text-muted fw-medium">@lang('translation.dashboard.total_plane')</p>
-                  <h4 class="mb-0">{{ $data['totalPlane'] }}</h4>
-                </div>
-
-                <div class="align-self-center flex-shrink-0">
-                  <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
-                    <span class="avatar-title rounded-circle bg-primary">
-                      <i class="bx bxs-paper-plane font-size-24"></i>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card mini-stats-wid">
-            <div class="card-body">
-              <div class="d-flex">
-                <div class="flex-grow-1">
-                  <div class="flex-grow-1">
-                    <p class="text-muted fw-medium">@lang('translation.dashboard.total_airport')</p>
-                    <h4 class="mb-0">{{ $data['totalAirport'] }}</h4>
-                  </div>
-                </div>
-
-                <div class="align-self-center flex-shrink-0">
-                  <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
-                    <span class="avatar-title rounded-circle bg-primary">
-                      <i class="bx bx-buildings font-size-24"></i>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- end row -->
-    </div>
-  </div>
-  <!-- end row -->
-
-  <div class="row">
-    <div class="col-xl-12">
-      <div class="row">
-        <div class="col-md-4">
-          <div class="card mini-stats-wid">
-            <div class="card-body">
-              <div class="d-flex">
-                <div class="flex-grow-1">
-                  <p class="text-muted fw-medium">@lang('translation.dashboard.total_flight')</p>
-                  <h4 class="mb-0">{{ $data['totalFlight'] }}</h4>
-                </div>
-
-                <div class="align-self-center flex-shrink-0">
-                  <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
-                    <span class="avatar-title rounded-circle bg-primary">
-                      <i class="bx bxs-plane-alt font-size-24"></i>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card mini-stats-wid">
-            <div class="card-body">
-              <div class="d-flex">
-                <div class="flex-grow-1">
-                  <p class="text-muted fw-medium">@lang('translation.dashboard.total_ticket')</p>
-                  <h4 class="mb-0">{{ $data['totalTicket'] }}</h4>
-                </div>
-
-                <div class="align-self-center flex-shrink-0">
-                  <div class="mini-stat-icon avatar-sm rounded-circle bg-primary">
-                    <span class="avatar-title">
-                      <i class='bx bx-purchase-tag-alt font-size-24'></i>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card mini-stats-wid">
-            <div class="card-body">
-              <div class="d-flex">
-                <div class="flex-grow-1">
-                  <p class="text-muted fw-medium">@lang('translation.dashboard.total_customer')</p>
-                  <h4 class="mb-0">{{ $data['totalCustomer'] }}</h4>
-                </div>
-
-                <div class="align-self-center flex-shrink-0">
-                  <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
-                    <span class="avatar-title rounded-circle bg-primary">
-                      <i class="bx bx-user font-size-24"></i>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- end row -->
-    </div>
-  </div>
-  <!-- end row -->
-
-  {{-- chart1 --}}
-  <div class="row">
-    <div class="col-xl-6">
-      <div class="row">
-        <div class="col-lg-12">
-          <div class="card">
-            <div class="card-body">
-              <h4 class="card-title mb-4">@lang('translation.dashboard.active_airlines')</h4>
-              <div class="table-responsive">
-                <table class="table-nowrap mb-0 table align-middle">
-                  <thead class="table-light">
-                    <tr>
-                      <th class="align-middle">#</th>
-                      <th class="align-middle">@lang('translation.airline.name')</th>
-                      <th class="align-middle">@lang('translation.airline.code')</th>
-                      <th class="align-middle">@lang('translation.airline.no_of_flights')</th>
-                      <th class="align-middle">@lang('translation.airline.no_of_planes')</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @forelse ($data['activeAirlines'] as $airline)
-                      <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td class="text-info fw-bold">{{ ucfirst($airline->name) }}</td>
-                        <td>{{ ucfirst($airline->code) }}</td>
-                        <td><span class="badge badge-pill badge-soft-warning font-size-13">{{ ucfirst($airline->flights_count) }}</span></td>
-                        <td><span class="badge badge-pill badge-soft-success font-size-13">{{ ucfirst($airline->planes_count) }}</span></td>
-                      </tr>
-                    @empty
-                      <tr>
-                        <td colspan="10" class="text-center">@lang('translation.emptyTable')</td>
-                      </tr>
-                    @endforelse
-
-                  </tbody>
-                </table>
-              </div>
-              <!-- end table-responsive -->
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> <!-- end col -->
-
-    <div class="col-xl-6">
-      <div class="card">
+  <section class="hubud-secondary">
+    <h2 class="text-center mb-2 fs-4">Grafik Pemasukan APT Pranoto</h2>
+    <div class="d-flex justify-content-center">
+      <div class="card mb-5 w-75">
         <div class="card-body">
-          <h4 class="card-title mb-4">@lang('translation.dashboard.flight_status_chart')</h4>
-          <div class="row text-center">
-            @forelse ($data['flightStatusChart'] as $flight)
-              <div class="col-2">
-                <h5 class="mb-0">{{ $flight['total'] }}</h5>
-                <p class="text-muted text-truncate">{{ $flight['status'] ? __('translation.dashboard.take_off') : __('translation.dashboard.landing') }}</p>
-              </div>
-            @empty
-              <div class="col-2">
-                <p class="text-muted text-truncate">@lang('translation.no_data')</p>
-              </div>
-            @endforelse
-          </div>
-          <canvas id="flightStatusChart" height="260"></canvas>
-        </div>
-      </div>
-    </div> <!-- end col -->
-  </div> <!-- end row -->
-
-  {{-- last 10 flights --}}
-  <div class="row">
-    <div class="col-lg-12">
-      <div class="card">
-        <div class="card-body">
-          <h4 class="card-title mb-4">@lang('translation.dashboard.latest_flights')</h4>
-          <div class="table-responsive">
-            <table class="table-nowrap mb-0 table align-middle">
-              <thead class="table-light">
-                <tr>
-                  <th class="align-middle">#</th>
-                  <th class="align-middle">@lang('translation.flight.flight_number')</th>
-                  <th class="align-middle">@lang('translation.flight.airline')</th>
-                  <th class="align-middle">@lang('translation.flight.origin')</th>
-                  <th class="align-middle">@lang('translation.flight.destination')</th>
-                  <th class="align-middle">@lang('translation.flight.departure')</th>
-                  <th class="align-middle">@lang('translation.flight.arrival')</th>
-                  <th class="align-middle">@lang('translation.flight.price')</th>
-                </tr>
-              </thead>
-              <tbody>
-                @forelse ($data['lastFlights'] as $flight)
-                  <tr>
-                    <td><a href="javascript: void(0);" class="text-body fw-bold">#{{ $loop->iteration }}</a> </td>
-                    <td class="text-info fw-bold">{{ ucfirst($flight->flight_number) }}</td>
-                    <td>{{ ucfirst($flight->airline->name) }}</td>
-                    <td><span class="badge badge-pill badge-soft-info font-size-13">{{ ucfirst($flight->origin->name) }}</span></td>
-                    <td><span class="badge badge-pill badge-soft-success font-size-13">{{ ucfirst($flight->destination->name) }}</span></td>
-                    <td>{{ formatDateWithTimezone($flight->departure) }}</td>
-                    <td>{{ formatDateWithTimezone($flight->arrival) }}</td>
-                    <td class="text-primary fw-bold">{{ formatPrice($flight->price) }}</td>
-                  </tr>
-                @empty
-                  <tr>
-                    <td colspan="10" class="text-center">@lang('translation.emptyTable')</td>
-                  </tr>
-                @endforelse
-
-              </tbody>
-            </table>
-          </div>
-          <!-- end table-responsive -->
+            <canvas id="grafikKeuangan"></canvas>
         </div>
       </div>
     </div>
-  </div>
+    <h2 class="text-center mb-2 fs-4">Grafik Pai Arus Kas APT Pranoto</h2>
+    <div class="d-flex justify-content-center">
+      <div class="card w-75">
+          <div class="card-body">
+            <canvas id="pieKeuangan"></canvas>
+          </div>
+      </div>
+    </div>
+  </section>
   <!-- end row -->
 @endsection
 @section('script')
@@ -277,6 +43,72 @@
   <script src="{{ URL::asset('/assets/libs/chart-js/chart-js.min.js') }}"></script>
   <!-- Magnific Popup-->
   <script src="{{ URL::asset('/assets/libs/magnific-popup/magnific-popup.min.js') }}"></script>
+
+  <script>
+    const ctx = document.getElementById('grafikKeuangan').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: {!! json_encode($labels) !!}, // Data label (Bulan)
+        datasets: [{
+          label: 'Pemasukan (Rp)',
+          data: {!! json_encode($dataPemasukan) !!}, // Data Pemasukan
+          backgroundColor: 'rgba(54, 162, 235, 0.7)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return 'Rp ' + value.toLocaleString('id-ID');
+              }
+            }
+          }
+        }
+      }
+    });
+
+    const pieCtx = document.getElementById('pieKeuangan').getContext('2d');
+    new Chart(pieCtx, {
+      type: 'pie',
+      data: {
+        labels: ['Pemasukan', 'Pengeluaran'],
+        datasets: [{
+          data: [{{ $totalPemasukan }}, {{ $totalPengeluaran }}],
+          backgroundColor: [
+            'rgba(54, 162, 235, 0.7)', // biru (pemasukan)
+            'rgba(255, 99, 132, 0.7)'  // merah (pengeluaran)
+          ],
+          borderColor: [
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 99, 132, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                let label = context.label || '';
+                let value = context.parsed || 0;
+                return `${label}: Rp ${value.toLocaleString('id-ID')}`;
+              }
+            }
+          }
+        }
+      }
+    });
+  </script>
 
   {{-- 
   @if ($data['expenseChart'])

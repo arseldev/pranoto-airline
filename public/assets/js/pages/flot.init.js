@@ -1,4 +1,5 @@
 /******/ (function() { // webpackBootstrap
+var __webpack_exports__ = {};
 /*!*****************************************!*\
   !*** ./resources/js/pages/flot.init.js ***!
   \*****************************************/
@@ -8,6 +9,7 @@
   function t() {
     this.$body = n("body"), this.$realData = [];
   }
+
   t.prototype.createPlotGraph = function (t, a, o, e, r, l, i, s) {
     n.plot(n(t), [{
       data: a,
@@ -112,7 +114,11 @@
       var t = (0 < this.$realData.length ? this.$realData[this.$realData.length - 1] : 50) + 10 * Math.random() - 5;
       t < 0 ? t = 0 : 100 < t && (t = 100), this.$realData.push(t);
     }
-    for (var a = [], o = 0; o < this.$realData.length; ++o) a.push([o, this.$realData[o]]);
+
+    for (var a = [], o = 0; o < this.$realData.length; ++o) {
+      a.push([o, this.$realData[o]]);
+    }
+
     return a;
   }, t.prototype.createRealTimeGraph = function (t, a, o) {
     return n.plot(t, [a], {

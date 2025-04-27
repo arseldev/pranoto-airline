@@ -1,4 +1,5 @@
 /******/ (function() { // webpackBootstrap
+var __webpack_exports__ = {};
 /*!************************************************!*\
   !*** ./resources/js/pages/vector-maps.init.js ***!
   \************************************************/
@@ -6,6 +7,7 @@
   "use strict";
 
   function n() {}
+
   n.prototype.init = function () {
     a("#world-map-markers").vectorMap({
       map: "world_mill_en",

@@ -1,4 +1,5 @@
 /******/ (function() { // webpackBootstrap
+var __webpack_exports__ = {};
 /*!********************************************!*\
   !*** ./resources/js/pages/chartjs.init.js ***!
   \********************************************/
@@ -6,12 +7,15 @@
   "use strict";
 
   function r() {}
+
   r.prototype.respChart = function (r, o, e, a) {
     Chart.defaults.global.defaultFontColor = "#8791af", Chart.defaults.scale.gridLines.color = "rgba(166, 176, 207, 0.1)";
     var t = r.get(0).getContext("2d"),
-      n = l(r).parent();
+        n = l(r).parent();
+
     function i() {
       r.attr("width", l(n).width());
+
       switch (o) {
         case "Line":
           new Chart(t, {
@@ -20,6 +24,7 @@
             options: a
           });
           break;
+
         case "Doughnut":
           new Chart(t, {
             type: "doughnut",
@@ -27,6 +32,7 @@
             options: a
           });
           break;
+
         case "Pie":
           new Chart(t, {
             type: "pie",
@@ -34,6 +40,7 @@
             options: a
           });
           break;
+
         case "Bar":
           new Chart(t, {
             type: "bar",
@@ -41,6 +48,7 @@
             options: a
           });
           break;
+
         case "Radar":
           new Chart(t, {
             type: "radar",
@@ -48,6 +56,7 @@
             options: a
           });
           break;
+
         case "PolarArea":
           new Chart(t, {
             data: e,
@@ -56,6 +65,7 @@
           });
       }
     }
+
     l(window).resize(i), i();
   }, r.prototype.init = function () {
     this.respChart(l("#lineChart"), "Line", {

@@ -1,4 +1,5 @@
 /******/ (function() { // webpackBootstrap
+var __webpack_exports__ = {};
 /*!***********************************************!*\
   !*** ./resources/js/pages/sparklines.init.js ***!
   \***********************************************/
@@ -97,6 +98,7 @@ $(document).ready(function () {
       zeroAxis: !1
     });
   }
+
   var r;
   $(window).resize(function (e) {
     clearTimeout(r), r = setTimeout(i, 500);

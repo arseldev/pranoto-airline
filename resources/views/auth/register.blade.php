@@ -22,19 +22,19 @@
                       <h5 class="text-primary">Register Yourself</h5>
                     </div>
                   </div>
-                  <div class="col-5 align-self-end">
-                    <img src="{{ URL::asset('/assets/images/profile-img.png') }}" alt="" class="img-fluid">
+                  <div class="col-5 align-self-end mt-5 mb-3">
+                    <img src="{{ URL::asset('/assets/images/logo-blu.png') }}" alt="" class="img-fluid">
                   </div>
                 </div>
               </div>
               <div class="card-body pt-0">
                 <div>
                   <a href="#">
-                    <div class="avatar-md profile-user-wid mb-4">
+                    <!-- <div class="avatar-md profile-user-wid mb-4">
                       <span class="avatar-title rounded-circle bg-light">
                         <img src="{{ URL::asset('/assets/images/air-plane-icon.jpg') }}" alt="" class="rounded-circle" height="90">
                       </span>
-                    </div>
+                    </div> -->
                   </a>
                 </div>
                 @if ($errors->any())

@@ -10,8 +10,8 @@
   @endsection
 
   @section('content')
-    <div class="account-pages pt-sm-5 my-4">
-      <div class="container">
+    <div class="account-pages pt-sm-5 mt-5">
+      <div class="container mt-4">
         <div class="row justify-content-center">
           <div class="col-md-8 col-lg-6 col-xl-5">
             <div class="card overflow-hidden">
@@ -23,8 +23,8 @@
                       <p>Masuk untuk Melanjutkan ke Dasbor Bandara APT Pranoto.</p>
                     </div>
                   </div>
-                  <div class="col-4 align-self-end">
-                    <img src="{{ URL::asset('/assets/images/profile-img.png') }}" alt="" class="img-fluid">
+                  <div class="col-4 align-self-end mb-3">
+                    <img src="{{ URL::asset('/assets/images/logo-blu.png') }}" alt="" class="img-fluid">
                   </div>
                 </div>
               </div>
@@ -41,10 +41,10 @@
                   <div class="auth-logo-dark">
                     <div>
                       <div>
-                        <div class="avatar-md profile-user-wid mb-4">
-                          <span class="avatar-title rounded-circle bg-light">
+                        <div class="mb-4">
+                          <!-- <span class="avatar-title rounded-circle bg-light">
                             <img src="{{ URL::asset('/assets/images/air-plane-icon.jpg') }}" alt="" class="rounded-circle" height="90">
-                          </span>
+                          </span> -->
                         </div>
                       </div>
                     </div>

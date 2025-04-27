@@ -5,96 +5,102 @@ namespace App\Http\Controllers\Staff_User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Models\News;
+use App\Models\Finance;
+use Illuminate\Support\Facades\Validator;
 
 class LaporanKeuanganController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $news = News::latest()->get();
-        return view('user_staff.keuangan.index', compact('news'));
-    }
-    public function show($slug)
-    {
-        $news = News::where('slug', $slug)->firstOrFail();
-        return view('user_staff.berita.show', compact('news'));
+        $filter = $request->input('filter');
+        $year = $request->input('year');
+
+        // Mulai query Finance
+        $finances = Finance::query();
+
+        // Filter berdasarkan jenis aliran dana (in atau out)
+        if ($filter === 'in') {
+            $finances->where('flow_type', 'in');
+        } elseif ($filter === 'out') {
+            $finances->where('flow_type', 'out');
+        }
+
+        // Filter berdasarkan tahun (dari date)
+        if ($year) {
+            $finances->whereYear('date', $year);
+        }
+
+        // Ambil data dari database
+        $finances = $finances->get();
+
+        // Ambil daftar tahun yang tersedia untuk filter (dari date)
+        $years = Finance::selectRaw('DISTINCT YEAR(date) as year')
+                        ->whereNotNull('date')
+                        ->orderBy('year', 'desc')
+                        ->pluck('year');
+
+        // Kembalikan ke view dengan data yang telah difilter
+        return view('user_staff.keuangan.index', compact('finances', 'filter', 'years', 'year'));
     }
 
     public function create()
     {
-        return view('user_staff.berita.create');
+        $finances = old('finance', []);
+
+        $allFinance = \App\Models\Finance::select('note', 'flow_type')
+            ->whereNotNull('note')
+            ->get();
+
+        $uniqueNotes = $allFinance->groupBy('flow_type')->map(function ($items) {
+            return $items->pluck('note')->unique()->values();
+        });
+
+        return view('user_staff.keuangan.create', [
+            'finances' => $finances,
+            'uniqueNotes' => $uniqueNotes,
+        ]);
     }
+
 
     public function store(Request $request)
     {
-        $request->validate([
-            'title'     => 'required|unique:news,title|string|max:255',
-            'content'   => 'required|string',
-            'image'     => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+        // Validasi semua data di dalam array 'finance'
+        $validator = Validator::make($request->all(), [
+            'finance' => 'required|array|min:1',
+            'finance.*.flow_type' => 'required|in:in,out',
+            'finance.*.amount' => 'required|integer|min:1',
+            'finance.*.date' => 'required|date_format:Y-m',
+            'finance.*.note' => 'required|string', // Validasi catatan yang dipilih
         ], [
-            'title.required'   => 'Judul berita wajib diisi.',
-            'title.string'     => 'Judul berita harus berupa teks.',
-            'title.max'        => 'Judul berita maksimal 255 karakter.',
-            'title.unique'     => 'Judul berita tidak boleh sama dengan berita lainnya.',
-
-            'content.required' => 'Konten berita wajib diisi.',
-            'content.string'   => 'Konten berita harus berupa teks.',
-
-            'image.file'        => 'File gambar tidak valid.',
-            'image.mimes'       => 'Gambar harus berupa JPG/PNG.',
-            'image.max'         => 'Ukuran gambar maksimal 2MB.',
+            'finance.required' => 'Minimal satu baris data harus diisi.',
+            'finance.*.flow_type.required' => 'Aliran dana wajib diisi.',
+            'finance.*.flow_type.in' => 'Aliran dana harus berupa pemasukan atau pengeluaran.',
+            'finance.*.amount.required' => 'Jumlah wajib diisi.',
+            'finance.*.amount.integer' => 'Jumlah harus berupa angka bulat.',
+            'finance.*.amount.min' => 'Jumlah minimal adalah 1.',
+            'finance.*.date.required' => 'Periode wajib diisi.',
+            'finance.*.date.date_format' => 'Format periode harus YYYY-MM.',
+            'finance.*.note.required' => 'Catatan wajib diisi.',
         ]);
 
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $imagePath = $file->storeAs('documents/news', $filename, 'public');
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
 
-        News::create([
-            'title'   => $request->title,
-            'slug'    => Str::slug($request->title),
-            'content' => $request->content,
-            'image'   => $imagePath,
-        ]);
+        // Simpan setiap baris data
+        foreach ($request->finance as $data) {
+            $note = $data['note_manual'] ?? $data['note'] ?? null;
 
-        return redirect()->route('berita.staffIndex')->with('success', 'Berita berhasil ditambahkan!');
-    }
-
-    public function destroy($id)
-    {
-        $news = News::findOrFail($id);
-
-        if ($news->image) {
-            $documentPath = public_path('uploads/documents/news/' . basename($news->image));
-            if (file_exists($documentPath)) {
-                unlink($documentPath);
-            }
+            Finance::create([
+                'flow_type' => $data['flow_type'],
+                'amount' => $data['amount'],
+                'date' => $data['date'] . '-01', // Tambah tanggal default agar valid sebagai `date`
+                'note' => $note,
+            ]);
         }
-
-        $news->delete();
-
-        return redirect()->route('berita.staffIndex')->with('success', 'Berita berhasil dihapus.');
+        return redirect()->route('keuangan.staffIndex')->with('success', 'Data keuangan berhasil disimpan.');
     }
 
-    public function toggleHeadline(Request $request, $id)
-    {
-        $news = News::findOrFail($id);
-
-        $news->is_headline = $request->input('is_headline');
-        $news->save();
-
-        return back()->with('success', 'Status headline diperbarui.');
-    }
-    
-    public function togglePublish(Request $request, $id)
-    {
-        $news = News::findOrFail($id);
-
-        $news->is_published = $request->input('is_published');
-        $news->save();
-
-        return back()->with('success', 'Berita dipublish.');
-    }
 }

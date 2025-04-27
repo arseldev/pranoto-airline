@@ -14,6 +14,10 @@ html {
   --secondary-color: #1b1b1b;
 }
 
+#form{
+  padding-top: 13rem ;
+}
+
 @font-face {
   font-family: 'argonite';
   src: url('./assets/stone\ orgonite.woff');
@@ -42,6 +46,16 @@ nav svg {
   z-index: 10;
 } */
 
+.hubud{
+  background-color: #06A3DA;
+}
+.hubud-text{
+  color: #06A3DA;
+}
+.hubud-secondary{
+  background-color: #EEF9FF;
+}
+
 .links {
   z-index: 9;
   position: absolute;
@@ -60,7 +74,6 @@ nav svg {
   color: var(--secondary-color);
   font-size: 2rem;
 }
-
 .logo {
   display: flex;
   align-items: center;
@@ -90,7 +103,6 @@ nav svg {
   color: white;
 } */
 .selling-point {
-  margin-top: 25vh;
   font-family: 'argonite', sans-serif;
   text-shadow: 0px 4px 12px rgba(0, 0, 0, 0.49);
   text-align: center;
@@ -105,23 +117,30 @@ nav svg {
 }
 
 #navbar {
-  background-color: transparent;
+  background-color: #EEF9FF;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   color: white;
+  display: none;
 }
 
 #navbar.scrolled {
-  background-color: #212529;
+  display: block;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 10;
+  background-color: #EEF9FF;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 #navbar .navigation {
-  color: white;
+  color: black;
   transition: color 0.3s ease;
 }
 
 #navbar.scrolled a {
-  color: white !important;
+  color: black !important;
 }
 
 .ctas {
@@ -163,28 +182,61 @@ nav svg {
   z-index: -1;
 }
 
+.bg-black{
+  background-color: black;
+}
+
 .classes {
   color: var(--secondary-color);
-  text-align: center;
+}
+
+.argonite{
   font-family: 'argonite', sans-serif;
 }
 
+.classes h2{
+  font-family: 'argonite', sans-serif;
+}
+
+.fs-7{
+  font-size: .95rem !important;
+}
+.fs-8{
+  font-size: .85rem !important;
+}
+.fs-9{
+  font-size: .75rem !important;
+}
+
+.other-news{
+  gap: .5rem;
+}
+
+.other-news:hover{
+  gap: 1rem;
+  transition: all ease-in-out .2s;
+  border-bottom: 1px solid white;
+}
+
 .videos div {
-  margin-top: 3rem;
   width: 400px;
-  height: 400px;
+  /* height: 400px; */
 }
 .videos video {
   width: 100%;
   border-radius: 1rem;
   margin-top: 1rem;
 }
-.meditation,
-.yoga,
-.pilates {
-  position: relative;
+
+.pilates:hover {
+  transform: scale(1.03);
+  transition: all ease-in-out .1s;
 }
-.videos h3 {
+.social-media:hover {
+  transform: scale(1.5);
+  transition: all ease-in-out .1s;
+}
+/* .videos h3 {
   display: none;
   position: absolute;
   color: var(--main-color);
@@ -193,7 +245,7 @@ nav svg {
   left: 50%;
   transform: translate(-50%, -10%);
   font-size: 2rem;
-}
+} */
 
 .about {
   color: var(--secondary-color);
@@ -211,13 +263,47 @@ nav svg {
   margin-top: 2rem;
 }
 
-footer {
-  background: var(--secondary-color);
-  width: 100%;
+.footer {
+  width: 100vw;
   text-align: center;
   color: white;
   padding: 1.3rem 2rem;
 }
+
+.carousel-home {
+  height: 100vh;
+  object-fit: cover;
+  object-position: center center;
+}
+.carousel-footer {
+  object-fit: cover;
+  object-position: center center;
+}
+
+.email{
+  text-decoration: none;
+}
+
+.email:hover{
+  text-decoration: underline;
+}
+
+.iframe-container {
+  /* position: relative;
+  width: 100%;
+  padding-top: 56.25%; 
+  height: 0;
+  overflow: hidden; */
+  height: 100vh;
+}
+
+/* .iframe-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+} */
 
 @media screen and (min-width: 768px) {
   .conatiner {

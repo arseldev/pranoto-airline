@@ -1,4 +1,5 @@
 /******/ (function() { // webpackBootstrap
+var __webpack_exports__ = {};
 /*!************************************************!*\
   !*** ./resources/js/pages/ico-landing.init.js ***!
   \************************************************/
@@ -6,7 +7,7 @@ $(window).scroll(function () {
   50 <= $(window).scrollTop() ? $(".sticky").addClass("nav-sticky") : $(".sticky").removeClass("nav-sticky");
 }), $("[data-countdown]").each(function () {
   var s = $(this),
-    i = $(this).data("countdown");
+      i = $(this).data("countdown");
   s.countdown(i, function (s) {
     $(this).html(s.strftime('<div class="coming-box">%D <span>Days</span></div> <div class="coming-box">%H <span>Hours</span></div> <div class="coming-box">%M <span>Minutes</span></div> <div class="coming-box">%S <span>Seconds</span></div> '));
   });
