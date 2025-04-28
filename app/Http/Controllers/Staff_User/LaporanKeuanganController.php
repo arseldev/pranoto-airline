@@ -70,7 +70,22 @@ class LaporanKeuanganController extends Controller
             'finance.*.flow_type' => 'required|in:in,out',
             'finance.*.amount' => 'required|integer|min:1',
             'finance.*.date' => 'required|date_format:Y-m',
-            'finance.*.note' => 'required|string', // Validasi catatan yang dipilih
+            'finance.*.note' => [
+                function ($attribute, $value, $fail) use ($request) {
+                    // Ambil index saat ini, misal "finance.0.note" => ambil 0
+                    preg_match('/finance\.(\d+)\.note/', $attribute, $matches);
+                    $index = $matches[1] ?? null;
+        
+                    // Cek kalau index ditemukan
+                    if ($index !== null) {
+                        $manualNote = $request->input("finance.$index.note_manual");
+        
+                        if (empty($value) && empty($manualNote)) {
+                            $fail('Catatan wajib diisi (pilih salah satu atau isi manual).');
+                        }
+                    }
+                },
+            ],
         ], [
             'finance.required' => 'Minimal satu baris data harus diisi.',
             'finance.*.flow_type.required' => 'Aliran dana wajib diisi.',

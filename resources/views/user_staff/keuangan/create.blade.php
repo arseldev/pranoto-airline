@@ -69,7 +69,7 @@
                       <select name="finance[{{ $index }}][note]" class="form-control note">
                         <option value="">Pilih Catatan</option>
                         <!-- Menampilkan catatan berdasarkan aliran dana -->
-                        @foreach($uniqueNotes['in'] as $note)
+                        @foreach($uniqueNotes['in'] ?? [] as $note)
                           <option value="{{ $note }}" {{ old("finance.$index.note") == $note ? 'selected' : '' }}>
                             {{ $note }}
                           </option>

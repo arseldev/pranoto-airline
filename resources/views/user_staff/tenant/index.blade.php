@@ -58,9 +58,9 @@
                                 @php
                                   $status = $tenant->submission_status;
                                   $badgeClass = match($status) {
-                                      'disetujui' => 'bg-success',
-                                      'ditolak' => 'bg-danger',
-                                      default => 'bg-info',
+                                    'disetujui' => 'bg-success',
+                                    'ditolak' => 'bg-danger',
+                                    default => 'bg-info',
                                   };
                                 @endphp
                                 <span class="badge {{ $badgeClass }}">{{ ucfirst($status) }}</span>

@@ -44,6 +44,11 @@ class ViewServiceProvider extends ServiceProvider
                     ]],
                     ['name' => 'Layanan', 'dropdown' => [
                         ['name' => 'PAS', 'route' => 'https://aptpranoto.id/website/layanan/pas_orang.html'],
+                        ['name' => 'Tenant', 'route' => route('tenant')],
+                        ['name' => 'Sewa Lahan', 'route' => route('sewaLahan')],
+                        ['name' => 'Perijinan Usaha', 'route' => route('perijinanUsaha')],
+                        ['name' => 'Pengiklanan', 'route' => route('pengiklanan')],
+                        ['name' => 'Field Trip', 'route' => route('fieldTrip')],
                     ]],
                 ],
             ];

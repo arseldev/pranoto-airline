@@ -215,6 +215,11 @@ Route::get('/', [LandingPageController::class, 'home'])->name('home');
 Route::get('/informasi/berita', [LandingPageController::class, 'berita'])->name('berita');
 Route::get('/informasi/berita/{slug}', [LandingPageController::class, 'showNews'])->name('showNews');
 Route::get('/informasi/laporan-keuangan', [LandingPageController::class, 'laporanKeuangan'])->name('laporanKeuangan');
+Route::get('/informasi/tenant', [LandingPageController::class, 'tenant'])->name('tenant');
+Route::get('/informasi/sewa-lahan', [LandingPageController::class, 'sewaLahan'])->name('sewaLahan');
+Route::get('/informasi/perijinan-usaha', [LandingPageController::class, 'perijinanUsaha'])->name('perijinanUsaha');
+Route::get('/informasi/pengiklanan', [LandingPageController::class, 'pengiklanan'])->name('pengiklanan');
+Route::get('/informasi/field-trip', [LandingPageController::class, 'fieldTrip'])->name('fieldTrip');
 
 Route::get('/informasi-publik/profil-bandara', [LandingPageController::class, 'profilBandara'])->name('profilBandara');
 Route::get('/informasi-publik/struktur-organisasi', [LandingPageController::class, 'strukturOrganisasi'])->name('strukturOrganisasi');

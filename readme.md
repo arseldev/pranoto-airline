@@ -1,5 +1,5 @@
 Cara menjalankan project mode development:
-1. pnpm run dev
+1. npm run dev
 2. php artisan migrate (jika belum)
 3. php artisan db:seed untuk Sampling data (jika belum)
 4. matikan semua komentar bagian dev di .env
@@ -7,7 +7,7 @@ Cara menjalankan project mode development:
 6. php artisan serve
 
 Cara menjalankan project mode production:
-1. pnpm run prod
+1. npm run prod
 2. php artisan migrate (jika belum)
 3. php artisan db:seed untuk Sampling data (jika belum)
 4. jadikan komentar bagian dev di .env

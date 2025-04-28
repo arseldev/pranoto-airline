@@ -11,6 +11,7 @@ use App\Models\Ticket;
 use App\Models\User;
 use App\Models\Finance;
 use App\Models\Slider;
+use App\Models\Visitor;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -37,25 +38,84 @@ class HomeController extends Controller
         return view('home');
     }
 
-    public function root()
+    public function root(Request $request)
     {
-        $finances = Finance::selectRaw('
-            DATE_FORMAT(MIN(date), "%M %Y") as month,
-            SUM(CASE WHEN flow_type = "in" THEN amount ELSE 0 END) as pemasukan,
-            SUM(CASE WHEN flow_type = "out" THEN amount ELSE 0 END) as pengeluaran
-        ')
-        ->groupByRaw('YEAR(date), MONTH(date)')
-        ->orderByRaw('YEAR(date), MONTH(date)')
+        // Ambil data berdasarkan filter yang dipilih
+        $jenis_filter = $request->input('jenis_filter', 'bulan');
+        $filterTahun = $request->input('tahun', now()->year);
+        
+        // Ambil data berdasarkan filter tahun yang dipilih untuk grafik pie
+        $filterTahunPie = $request->input('tahun_pie', now()->year);
+        
+        // Ambil nilai anggaran dari request dan konversi ke integer
+        $anggaran = $request->has('anggaran') ? (int)$request->input('anggaran') : null;
+        
+        // Debug nilai anggaran yang diterima
+        // \Log::info('Nilai anggaran yang diterima: ' . $request->input('anggaran'));
+        // \Log::info('Nilai anggaran setelah konversi: ' . $anggaran);
+        
+        // Flag untuk menentukan apakah grafik pie perlu ditampilkan
+        $showPieChart = $anggaran !== null && $anggaran > 0;
+        
+        // Ambil semua tahun yang tersedia di database untuk dropdown
+        $years = Finance::selectRaw('YEAR(date) as year')
+                        ->distinct()
+                        ->orderBy('year', 'desc')
+                        ->get()
+                        ->pluck('year');
+        
+        // Jika tidak ada tahun yang tersedia, gunakan tahun sekarang
+        if ($years->isEmpty()) {
+            $years = collect([now()->year]);
+        }
+        
+        // Mendapatkan data pemasukan per bulan atau per tahun
+        if ($jenis_filter == 'bulan') {
+            // Filter per bulan dalam satu tahun tertentu
+            $data = Finance::whereYear('date', $filterTahun)
+                            ->where('flow_type', 'in') // hanya pemasukan
+                            ->selectRaw('MONTH(date) as bulan, SUM(amount) as total_pemasukan')
+                            ->groupBy('bulan')
+                            ->orderBy('bulan')
+                            ->get();
+            
+            // Untuk bulan, label bulan bisa diatur sesuai nama bulan
+            $labels = $data->map(function ($item) {
+                return \Carbon\Carbon::createFromFormat('m', $item->bulan)->format('F');
+            });
+            $dataPemasukan = $data->pluck('total_pemasukan');
+        } else {
+            // Filter per tahun untuk semua tahun yang ada
+            $data = Finance::where('flow_type', 'in')
+                            ->selectRaw('YEAR(date) as tahun, SUM(amount) as total_pemasukan')
+                            ->groupBy('tahun')
+                            ->orderBy('tahun')
+                            ->get();
+            
+            // Untuk tahun, label adalah semua tahun yang ada
+            $labels = $data->pluck('tahun');
+            $dataPemasukan = $data->pluck('total_pemasukan');
+        }
+        
+        // Data untuk grafik pie: anggaran vs pengeluaran dalam tahun yang dipilih
+        $totalPemasukan = Finance::whereYear('date', $filterTahunPie)
+                            ->where('flow_type', 'in')
+                            ->sum('amount');
+        
+        $totalPengeluaran = $showPieChart ? Finance::whereYear('date', $filterTahunPie)
+                            ->where('flow_type', 'out')
+                            ->sum('amount') : 0;
+        
+
+        $visitors = Visitor::select(DB::raw('DATE(created_at) as date'), DB::raw('count(*) as total'))
+        ->whereDate('created_at', '>=', now()->subDays(6)) // 7 hari ke belakang (hari ini + 6 hari lalu)
+        ->groupBy('date')
+        ->orderBy('date', 'asc')
         ->get();
-
-        // Grafik pertumbuhan keuangan
-        $labels = $finances->pluck('month');
-        $dataPemasukan = $finances->pluck('pemasukan');
-        $dataPengeluaran = $finances->pluck('pengeluaran');
-
-        // Pie chart total pemasukan vs pengeluaran
-        $totalPemasukan = Finance::where('flow_type', 'in')->sum('amount');
-        $totalPengeluaran = Finance::where('flow_type', 'out')->sum('amount');
+    
+        // Siapkan data untuk Chart.js
+        $dates = $visitors->pluck('date');
+        $totals = $visitors->pluck('total');
 
         $totalAirline = Airline::count();
         $totalCustomer = User::whereIsAdmin(0)->count();
@@ -107,8 +167,12 @@ class HomeController extends Controller
             "activeAirlines"    => $activeAirlines,
             "flightStatusChart" => $flightStatusChart,
         ];
-        return view('admin.index', compact('data', 'labels', 'dataPemasukan', 'dataPengeluaran', 'totalPemasukan', 'totalPengeluaran'));
-    }
+        return view('admin.index', compact(
+            'data', 'dates', 'totals', 'labels', 'dataPemasukan', 'totalPemasukan', 'totalPengeluaran', 
+            'years', 'filterTahun', 'filterTahunPie', 'jenis_filter', 
+            'anggaran', 'showPieChart')
+        );
+}
 
     public function storeTempFile(Request $request)
     {

@@ -7,13 +7,22 @@ use Illuminate\Http\Request;
 use App\Models\Slider;
 use App\Models\News;
 use App\Models\Finance;
+use App\Models\Visitor;
 use App\Models\PublicInformation;
+use Carbon\Carbon;
 
 class LandingPageController extends Controller
 {
-    public function home()
+    public function home(Request $request)
     {
+        $ip = $request->ip(); // IP Address pengunjung
+        $userAgent = $request->header('User-Agent'); // Informasi browser/device
         $sliders = Slider::where('is_visible_home', 1)->get();
+
+        Visitor::create([
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->header('User-Agent'),
+        ]);        
 
         return view('home', compact('sliders'));
     }
@@ -65,34 +74,94 @@ class LandingPageController extends Controller
 
         return view('navigation.informasi.berita.show', compact('news', 'latestArticles'));
     }
+    public function tenant(){return view('navigation.informasi.ajuan.index');}
+    public function sewaLahan(){return view('navigation.informasi.ajuan.index');}
+    public function perijinanUsaha(){return view('navigation.informasi.ajuan.index');}
+    public function pengiklanan(){return view('navigation.informasi.ajuan.index');}
+    public function fieldTrip(){return view('navigation.informasi.ajuan.index');}
+
     public function profilBandara(){return view('navigation.informasi-publik.profil-bandara.index');}
     public function strukturOrganisasi(){return view('navigation.informasi-publik.struktur-organisasi.index');}
     public function pejabatBandara(){return view('navigation.informasi-publik.pejabat-bandara.index');}
     public function profilPPID(){return view('navigation.informasi-publik.profil-ppid-blu.index');}
     public function sopPpid(){return view('navigation.informasi-publik.sop-ppid.index');}
     public function pengajuanInformasiPublik(){return view('navigation.informasi-publik.pengajuan-informasi-publik.index');}
-    public function laporanKeuangan(){
-        $finances = Finance::selectRaw('
-            DATE_FORMAT(MIN(date), "%M %Y") as month,
-            SUM(CASE WHEN flow_type = "in" THEN amount ELSE 0 END) as pemasukan,
-            SUM(CASE WHEN flow_type = "out" THEN amount ELSE 0 END) as pengeluaran
-        ')
-        ->groupByRaw('YEAR(date), MONTH(date)')
-        ->orderByRaw('YEAR(date), MONTH(date)')
-        ->get();
-
-        // Grafik pertumbuhan keuangan
-        $labels = $finances->pluck('month');
-        $dataPemasukan = $finances->pluck('pemasukan');
-        $dataPengeluaran = $finances->pluck('pengeluaran');
-
-        // Pie chart total pemasukan vs pengeluaran
-        $totalPemasukan = Finance::where('flow_type', 'in')->sum('amount');
-        $totalPengeluaran = Finance::where('flow_type', 'out')->sum('amount');
-
-        return view('navigation.informasi.laporan-keuangan.index', compact('labels', 'dataPemasukan', 'dataPengeluaran', 'totalPemasukan', 'totalPengeluaran'));
-    }
     
+    public function laporanKeuangan(Request $request)
+    {
+        // Ambil data berdasarkan filter yang dipilih
+        $jenis_filter = $request->input('jenis_filter', 'bulan');
+        $filterTahun = $request->input('tahun', now()->year);
+        
+        // Ambil data berdasarkan filter tahun yang dipilih untuk grafik pie
+        $filterTahunPie = $request->input('tahun_pie', now()->year);
+        
+        // Ambil nilai anggaran dari request dan konversi ke integer
+        $anggaran = $request->has('anggaran') ? (int)$request->input('anggaran') : null;
+        
+        // Debug nilai anggaran yang diterima
+        // \Log::info('Nilai anggaran yang diterima: ' . $request->input('anggaran'));
+        // \Log::info('Nilai anggaran setelah konversi: ' . $anggaran);
+        
+        // Flag untuk menentukan apakah grafik pie perlu ditampilkan
+        $showPieChart = $anggaran !== null && $anggaran > 0;
+        
+        // Ambil semua tahun yang tersedia di database untuk dropdown
+        $years = Finance::selectRaw('YEAR(date) as year')
+                        ->distinct()
+                        ->orderBy('year', 'desc')
+                        ->get()
+                        ->pluck('year');
+        
+        // Jika tidak ada tahun yang tersedia, gunakan tahun sekarang
+        if ($years->isEmpty()) {
+            $years = collect([now()->year]);
+        }
+        
+        // Mendapatkan data pemasukan per bulan atau per tahun
+        if ($jenis_filter == 'bulan') {
+            // Filter per bulan dalam satu tahun tertentu
+            $data = Finance::whereYear('date', $filterTahun)
+                            ->where('flow_type', 'in') // hanya pemasukan
+                            ->selectRaw('MONTH(date) as bulan, SUM(amount) as total_pemasukan')
+                            ->groupBy('bulan')
+                            ->orderBy('bulan')
+                            ->get();
+            
+            // Untuk bulan, label bulan bisa diatur sesuai nama bulan
+            $labels = $data->map(function ($item) {
+                return \Carbon\Carbon::createFromFormat('m', $item->bulan)->format('F');
+            });
+            $dataPemasukan = $data->pluck('total_pemasukan');
+        } else {
+            // Filter per tahun untuk semua tahun yang ada
+            $data = Finance::where('flow_type', 'in')
+                            ->selectRaw('YEAR(date) as tahun, SUM(amount) as total_pemasukan')
+                            ->groupBy('tahun')
+                            ->orderBy('tahun')
+                            ->get();
+            
+            // Untuk tahun, label adalah semua tahun yang ada
+            $labels = $data->pluck('tahun');
+            $dataPemasukan = $data->pluck('total_pemasukan');
+        }
+        
+        // Data untuk grafik pie: anggaran vs pengeluaran dalam tahun yang dipilih
+        $totalPemasukan = Finance::whereYear('date', $filterTahunPie)
+                            ->where('flow_type', 'in')
+                            ->sum('amount');
+        
+        $totalPengeluaran = $showPieChart ? Finance::whereYear('date', $filterTahunPie)
+                            ->where('flow_type', 'out')
+                            ->sum('amount') : 0;
+        
+        return view('navigation.informasi.laporan-keuangan.index', compact(
+            'labels', 'dataPemasukan', 'totalPemasukan', 'totalPengeluaran', 
+            'years', 'filterTahun', 'filterTahunPie', 'jenis_filter', 
+            'anggaran', 'showPieChart'
+        ));
+    }
+
     public function storePengajuanInformasiPublik(Request $request)
     {
         
