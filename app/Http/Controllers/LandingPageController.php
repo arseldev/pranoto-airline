@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Slider;
 use App\Models\News;
 use App\Models\Finance;
+use App\Models\BudgetExpense;
 use App\Models\Visitor;
 use App\Models\PublicInformation;
 use Carbon\Carbon;
@@ -89,76 +90,68 @@ class LandingPageController extends Controller
     
     public function laporanKeuangan(Request $request)
     {
-        // Ambil data berdasarkan filter yang dipilih
-        $jenis_filter = $request->input('jenis_filter', 'bulan');
-        $filterTahun = $request->input('tahun', now()->year);
-        
-        // Ambil data berdasarkan filter tahun yang dipilih untuk grafik pie
-        $filterTahunPie = $request->input('tahun_pie', now()->year);
-        
-        // Ambil nilai anggaran dari request dan konversi ke integer
-        $anggaran = $request->has('anggaran') ? (int)$request->input('anggaran') : null;
-        
-        // Debug nilai anggaran yang diterima
-        // \Log::info('Nilai anggaran yang diterima: ' . $request->input('anggaran'));
-        // \Log::info('Nilai anggaran setelah konversi: ' . $anggaran);
-        
-        // Flag untuk menentukan apakah grafik pie perlu ditampilkan
-        $showPieChart = $anggaran !== null && $anggaran > 0;
-        
-        // Ambil semua tahun yang tersedia di database untuk dropdown
+        // Ambil semua tahun unik dari tabel finances
         $years = Finance::selectRaw('YEAR(date) as year')
-                        ->distinct()
-                        ->orderBy('year', 'desc')
-                        ->get()
-                        ->pluck('year');
-        
-        // Jika tidak ada tahun yang tersedia, gunakan tahun sekarang
-        if ($years->isEmpty()) {
-            $years = collect([now()->year]);
-        }
-        
-        // Mendapatkan data pemasukan per bulan atau per tahun
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->pluck('year')
+            ->toArray();
+    
+        $filterTahun = $request->get('tahun', date('Y'));
+        $filterTahunPie = $request->get('tahun_pie', date('Y'));
+        $jenis_filter = $request->get('jenis_filter', 'bulan');
+    
+        // 1. DATA GRAFIK BAR (PEMASUKAN)
+        $query = Finance::where('flow_type', 'in');
         if ($jenis_filter == 'bulan') {
-            // Filter per bulan dalam satu tahun tertentu
-            $data = Finance::whereYear('date', $filterTahun)
-                            ->where('flow_type', 'in') // hanya pemasukan
-                            ->selectRaw('MONTH(date) as bulan, SUM(amount) as total_pemasukan')
-                            ->groupBy('bulan')
-                            ->orderBy('bulan')
-                            ->get();
-            
-            // Untuk bulan, label bulan bisa diatur sesuai nama bulan
-            $labels = $data->map(function ($item) {
-                return \Carbon\Carbon::createFromFormat('m', $item->bulan)->format('F');
-            });
-            $dataPemasukan = $data->pluck('total_pemasukan');
-        } else {
-            // Filter per tahun untuk semua tahun yang ada
-            $data = Finance::where('flow_type', 'in')
-                            ->selectRaw('YEAR(date) as tahun, SUM(amount) as total_pemasukan')
-                            ->groupBy('tahun')
-                            ->orderBy('tahun')
-                            ->get();
-            
-            // Untuk tahun, label adalah semua tahun yang ada
-            $labels = $data->pluck('tahun');
-            $dataPemasukan = $data->pluck('total_pemasukan');
+            $query->whereYear('date', $filterTahun);
+            $labels = [
+                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+            ];
+            $dataPemasukan = array_fill(0, 12, 0);
+            foreach ($query->get() as $finance) {
+                $bulan = (int) date('n', strtotime($finance->date)) - 1;
+                $dataPemasukan[$bulan] += $finance->amount;
+            }
+        } else { // jenis_filter == tahun
+            $labels = [];
+            $dataPemasukan = [];
+    
+            $tahunRange = Finance::where('flow_type', 'in')
+                ->selectRaw('YEAR(date) as year')
+                ->distinct()
+                ->orderBy('year')
+                ->pluck('year')
+                ->toArray();
+    
+            foreach ($tahunRange as $year) {
+                $labels[] = $year;
+                $total = Finance::whereYear('date', $year)
+                    ->where('flow_type', 'in')
+                    ->sum('amount');
+                $dataPemasukan[] = $total;
+            }
         }
-        
-        // Data untuk grafik pie: anggaran vs pengeluaran dalam tahun yang dipilih
-        $totalPemasukan = Finance::whereYear('date', $filterTahunPie)
-                            ->where('flow_type', 'in')
-                            ->sum('amount');
-        
-        $totalPengeluaran = $showPieChart ? Finance::whereYear('date', $filterTahunPie)
-                            ->where('flow_type', 'out')
-                            ->sum('amount') : 0;
-        
+    
+        // 2. DATA GRAFIK PIE (ANGGARAN VS PENGELUARAN)
+    
+        // Ambil total Anggaran (dari tabel finances flow_type = 'budget')
+        $anggaran = Finance::where('flow_type', 'budget')
+            ->whereYear('date', $filterTahunPie)
+            ->sum('amount');
+    
+        // Ambil total Pengeluaran (dari tabel budget_expenses join finance)
+        $totalPengeluaran = BudgetExpense::whereHas('finance', function($query) use ($filterTahunPie) {
+            $query->whereYear('date', $filterTahunPie);
+        })->sum('amount');
+    
+        $showPieChart = $anggaran > 0; // Hanya tampilkan grafik Pie jika anggaran ada
+    
         return view('navigation.informasi.laporan-keuangan.index', compact(
-            'labels', 'dataPemasukan', 'totalPemasukan', 'totalPengeluaran', 
-            'years', 'filterTahun', 'filterTahunPie', 'jenis_filter', 
-            'anggaran', 'showPieChart'
+            'years', 'filterTahun', 'filterTahunPie',
+            'jenis_filter', 'labels', 'dataPemasukan',
+            'anggaran', 'totalPengeluaran', 'showPieChart'
         ));
     }
 

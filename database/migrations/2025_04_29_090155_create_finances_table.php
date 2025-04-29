@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
 
             $table->date('date'); 
-            $table->enum('flow_type', ['in', 'out']); 
+            $table->enum('flow_type', ['in', 'budget']); 
             $table->unsignedInteger('amount'); 
             $table->text('note')->nullable(); 
         

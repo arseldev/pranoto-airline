@@ -27,81 +27,67 @@
               {{ $errors->first('finance') }}
             </div>
           @endif
-
-          <form action="{{ route('keuangan.store') }}" method="POST">
-            @csrf
-            <table class="table" id="financeTable">
-              <thead>
-                <tr>
-                  <th>Aliran Dana</th>
-                  <th>Jumlah</th>
-                  <th>Periode</th>
-                  <th>Catatan</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach(old('finance', []) as $index => $finance)
-                  <tr>
-                    <td>
-                      <select name="finance[{{ $index }}][flow_type]" class="form-control flow_type">
-                        <option value="">Pilih Aliran Dana</option>
-                        <option value="in" {{ old("finance.$index.flow_type", $finance['flow_type'] ?? '') == 'in' ? 'selected' : '' }}>Pemasukan</option>
-                        <option value="out" {{ old("finance.$index.flow_type", $finance['flow_type'] ?? '') == 'out' ? 'selected' : '' }}>Pengeluaran</option>
-                      </select>
-                      @error("finance.$index.flow_type")
-                        <div class="text-danger">{{ $message }}</div>
-                      @enderror
-                    </td>
-                    <td>
-                      <input type="number" name="finance[{{ $index }}][amount]" class="form-control" value="{{ old("finance.$index.amount", $finance['amount'] ?? '') }}" step="0.01">
-                      @error("finance.$index.amount")
-                        <div class="text-danger">{{ $message }}</div>
-                      @enderror
-                    </td>
-                    <td>
-                      <input type="month" name="finance[{{ $index }}][date]" class="form-control" value="{{ old("finance.$index.date", $finance['date'] ?? '') }}">
-                      @error("finance.$index.date")
-                        <div class="text-danger">{{ $message }}</div>
-                      @enderror
-                    </td>
-                    <td>
-                      <select name="finance[{{ $index }}][note]" class="form-control note">
-                        <option value="">Pilih Catatan</option>
-                        <!-- Menampilkan catatan berdasarkan aliran dana -->
-                        @foreach($uniqueNotes['in'] ?? [] as $note)
-                          <option value="{{ $note }}" {{ old("finance.$index.note") == $note ? 'selected' : '' }}>
-                            {{ $note }}
-                          </option>
-                        @endforeach
-                      </select>
-                      <!-- Input manual catatan baru -->
-                      <input type="text" name="finance[{{ $index }}][note_manual]" class="form-control mt-2" placeholder="Tambahkan catatan baru">
-                      @error("finance.$index.note")
-                        <div class="text-danger">{{ $message }}</div>
-                      @enderror
-                    </td>
-                    <td>
-                      <button type="button" class="btn btn-danger btn-sm remove-row">Hapus</button>
-                    </td>
-                  </tr>
-                @endforeach
-              </tbody>
-            </table>
-            <div class="d-flex justify-content-end gap-3">
-              <button type="button" class="btn btn-primary" id="addRow">Tambah Baris</button>
-              <button type="submit" class="btn btn-success">Simpan</button>
-            </div>
-            @if ($errors->any())
-              <div class="alert alert-danger mt-3">
-                <ul>
-                  @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                  @endforeach
-                </ul>
+          @if ($errors->has('budget_expenses'))
+              <div class="alert alert-danger">
+                  {{ $errors->first('budget_expenses') }}
               </div>
-            @endif
-          </form>
+          @endif
+
+
+          <form method="POST" action="{{ route('keuangan.store') }}">
+            @csrf
+
+            <!-- Flow Type -->
+            <div class="form-group">
+              <label for="flow_type">Aliran Dana</label>
+              <select name="finance[0][flow_type]" id="flow_type" class="form-control" onchange="toggleBudgetFields()">
+                <option value="">-- Pilih --</option>
+                <option value="in">Pemasukan</option>
+                <option value="budget">Anggaran</option>
+              </select>
+            </div>
+
+            <!-- Amount -->
+            <div class="form-group">
+              <label for="amount">Jumlah</label>
+              <input type="number" name="finance[0][amount]" class="form-control" min="1" required>
+            </div>
+
+            <!-- Date -->
+            <div class="form-group">
+              <label for="date">Periode (YYYY-MM)</label>
+              <input type="month" name="finance[0][date]" class="form-control" required>
+            </div>
+
+            <!-- Note -->
+            <div class="form-group">
+              <label for="note">Catatan</label>
+              <textarea name="finance[0][note]" class="form-control"></textarea>
+            </div>
+
+            <!-- Budget Expenses Section -->
+            <div id="budget-expenses-section" style="display:none; margin-top: 20px;">
+              <h5>Detail Pengeluaran</h5>
+              <table class="table" id="budget-expenses-table">
+                  <thead>
+                      <tr>
+                          <th>Deskripsi</th>
+                          <th>Jumlah</th>
+                          <th>Aksi</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <!-- Dynamic rows will be added here -->
+                  </tbody>
+              </table>
+              <div id="total-expense-wrapper" style="display:none; margin-top: 10px;">
+                <strong>Total Pengeluaran: Rp <span id="total-expense">0</span></strong>
+            </div>
+              <button type="button" class="btn btn-sm btn-primary" onclick="addExpenseRow()">+ Tambah Baris</button>
+            </div>
+
+            <button type="submit" class="btn btn-success mt-3">Simpan</button>
+        </form>
         </div>
       </div>
     </div>
@@ -109,6 +95,80 @@
 @endsection
 
 @push('scripts')
+  <script>
+      // Fungsi untuk menghitung total pengeluaran
+      function calculateTotalExpense() {
+          let totalExpense = 0;
+          // Ambil semua elemen input jumlah pengeluaran
+          document.querySelectorAll('.expense-amount').forEach(function (input) {
+              totalExpense += parseInt(input.value) || 0; // Menambahkan jumlah pengeluaran
+          });
+          return totalExpense;
+      }
+
+      // Fungsi validasi form sebelum submit
+      function validateForm(event) {
+          const budgetAmount = parseInt(document.querySelector('#budget-amount').value); // Anggaran yang dimasukkan
+          const totalExpense = calculateTotalExpense(); // Total pengeluaran
+
+          if (totalExpense > budgetAmount) {
+              // Menampilkan pesan error jika pengeluaran melebihi anggaran
+              document.querySelector('#expense-error').textContent = 'Total pengeluaran tidak boleh melebihi jumlah anggaran.';
+              event.preventDefault(); // Mencegah form disubmit
+          } else {
+              // Kosongkan pesan error jika valid
+              document.querySelector('#expense-error').textContent = '';
+          }
+      }
+
+      // Event listener saat form disubmit
+      document.querySelector('#finance-form').addEventListener('submit', validateForm);
+  </script>
+  <script>
+    function toggleBudgetFields() {
+        const flowType = document.getElementById('flow_type').value;
+        const budgetSection = document.getElementById('budget-expenses-section');
+        const totalExpenseWrapper = document.getElementById('total-expense-wrapper');
+        if (flowType === 'budget') {
+            budgetSection.style.display = 'block';
+            totalExpenseWrapper.style.display = 'block';
+        } else {
+            budgetSection.style.display = 'none';
+            totalExpenseWrapper.style.display = 'none';
+        }
+        calculateTotalExpense();
+    }
+
+    function addExpenseRow() {
+        const tableBody = document.getElementById('budget-expenses-table').querySelector('tbody');
+        const rowIndex = tableBody.rows.length;
+        const row = `
+            <tr>
+                <td><input type="text" name="budget_expenses[${rowIndex}][description]" class="form-control" required></td>
+                <td>
+                    <input type="number" name="budget_expenses[${rowIndex}][amount]" class="form-control expense-amount" min="1" required oninput="calculateTotalExpense()">
+                </td>
+                <td><button type="button" class="btn btn-danger btn-sm" onclick="removeExpenseRow(this)">Hapus</button></td>
+            </tr>
+        `;
+        tableBody.insertAdjacentHTML('beforeend', row);
+        calculateTotalExpense();
+    }
+
+    function removeExpenseRow(button) {
+        button.closest('tr').remove();
+        calculateTotalExpense();
+    }
+
+    function calculateTotalExpense() {
+        let total = 0;
+        document.querySelectorAll('.expense-amount').forEach(function(input) {
+            const val = parseInt(input.value) || 0;
+            total += val;
+        });
+        document.getElementById('total-expense').innerText = total.toLocaleString('id-ID');
+    }
+  </script>
   <script>
     let rowIndex = document.querySelectorAll('#financeTable tbody tr').length;
 

@@ -78,7 +78,7 @@
             </a>
           </li>
 
-          <li class="{{ request()->routeIs('airlines.*') ? 'mm-active' : '' }}">
+          <!-- <li class="{{ request()->routeIs('airlines.*') ? 'mm-active' : '' }}">
             <a href="{{ route('airlines.index') }}" class="waves-effect">
               <i class='bx bx-globe'></i>
               <span key="t-contact">@lang('sidebar.airlines')</span>
@@ -104,10 +104,10 @@
               <i class='bx bxs-plane-alt'></i>
               <span key="t-contact">@lang('sidebar.flights')</span>
             </a>
-          </li>
+          </li> -->
 
           {{-- tickets --}}
-          <li>
+          <!-- <li>
             <a href="javascript: void(0);" class="has-arrow waves-effect {{ request()->routeIs('tickets.*') ? 'mm-active' : '' }}">
               <i class="dripicons-ticket"></i>
               <span key="t-ecommerce">@lang('sidebar.tickets')</span>
@@ -134,7 +134,7 @@
                 </a>
               </li>
             </ul>
-          </li>
+          </li> -->
         @else
           {{-- USER ROUTES  --}}
           <!-- <li>
@@ -144,7 +144,7 @@
             </a>
           </li> -->
 
-          <li>
+          <!-- <li>
             <a href="{{ route('tickets.flights') }}" class="waves-effect">
               <i class="bx bx-credit-card"></i>
               <span>@lang('sidebar.book_ticket')</span>
@@ -156,7 +156,7 @@
               <i class="bx bx-credit-card"></i>
               <span>@lang('sidebar.my_tickets')</span>
             </a>
-          </li>
+          </li> -->
         @endadmin
 
       </ul>

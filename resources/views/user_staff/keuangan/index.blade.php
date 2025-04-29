@@ -48,7 +48,7 @@
                             <select name="filter" id="filter" class="form-control pe-5">
                                 <option value="">Semua</option>
                                 <option value="in" {{ request('filter') == 'in' ? 'selected' : '' }}>Pemasukan</option>
-                                <option value="out" {{ request('filter') == 'out' ? 'selected' : '' }}>Pengeluaran</option>
+                                <option value="budget" {{ request('filter') == 'budget' ? 'selected' : '' }}>Anggaran</option>
                             </select>
                         </div>
 
@@ -73,6 +73,7 @@
                         <th>Jumlah</th>
                         <th>Catatan</th>
                         <th>Dibuat pada</th>
+                        <th>Aksi</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -84,16 +85,49 @@
                             @if($finance->flow_type === 'in')
                               <span class="badge bg-success">Pemasukan</span>
                             @else
-                              <span class="badge bg-danger">Pengeluaran</span>
+                              <span class="badge bg-warning">Anggaran</span>
                             @endif
                           </td>
                           <td>Rp {{ number_format($finance->amount, 0, ',', '.') }}</td>
                           <td>{{ $finance->note ?? '-' }}</td>
                           <td>{{ $finance->created_at->format('d M Y') }}</td>
+                          <td>
+                            @if($finance->flow_type == 'budget')
+                              <!-- Tombol dropdown untuk menampilkan pengeluaran terkait anggaran -->
+                              <button class="btn btn-info btn-sm" data-bs-toggle="collapse" data-bs-target="#expenses-{{ $finance->id }}" aria-expanded="false" aria-controls="expenses-{{ $finance->id }}">
+                                Lihat Pengeluaran
+                              </button>
+                              <div class="collapse" id="expenses-{{ $finance->id }}">
+                                <table class="table table-bordered mt-3">
+                                  <thead>
+                                    <tr>
+                                      <th>No</th>
+                                      <th>Deskripsi</th>
+                                      <th>Jumlah</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    @foreach($finance->expenses as $expense)
+                                      <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $expense->description }}</td>
+                                        <td>Rp {{ number_format($expense->amount, 0, ',', '.') }}</td>
+                                      </tr>
+                                    @endforeach
+                                    @if($finance->expenses->isEmpty())
+                                      <tr>
+                                        <td colspan="3" class="text-center">Tidak ada pengeluaran untuk anggaran ini.</td>
+                                      </tr>
+                                    @endif
+                                  </tbody>
+                                </table>
+                              </div>
+                            @endif
+                          </td>
                         </tr>
                       @empty
                         <tr>
-                          <td colspan="6" class="text-center">Data tidak tersedia.</td>
+                          <td colspan="7" class="text-center">Data tidak tersedia.</td>
                         </tr>
                       @endforelse
                     </tbody>
@@ -107,10 +141,4 @@
       </div>
     </div>
   </div>
-@endsection
-
-@section('script')
-<script>
-  // Inisialisasi table jika pakai plugin seperti DataTables
-</script>
 @endsection

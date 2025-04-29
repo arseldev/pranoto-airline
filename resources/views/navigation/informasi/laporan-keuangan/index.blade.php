@@ -67,10 +67,10 @@
     </div>
   </div>
 
-  {{-- Form Input Anggaran untuk Grafik Pie --}}
+  {{-- Filter Form untuk Grafik Pie --}}
   <div class="card mb-5">
     <div class="card-header">
-      <h5 class="mb-0">Input Anggaran untuk Perbandingan dengan Pengeluaran</h5>
+      <h5 class="mb-0">Filter Grafik Anggaran vs Pengeluaran</h5>
     </div>
     <div class="card-body">
       <form method="GET" action="{{ route('laporanKeuangan') }}" id="formGrafikPie">
@@ -85,14 +85,6 @@
               @endforeach
             </select>
           </div>
-          
-          {{-- Input Anggaran --}}
-          <div class="col-auto">
-            <label for="anggaranInput" class="col-form-label">Anggaran (Rp)</label>
-          </div>
-          <div class="col-auto">
-            <input type="text" name="anggaran" id="anggaranInput" class="form-control" value="{{ $anggaran ?? '' }}" required>
-          </div>
 
           {{-- Menyimpan nilai filter lainnya saat form ini disubmit --}}
           <input type="hidden" name="jenis_filter" value="{{ $jenis_filter }}">
@@ -106,7 +98,7 @@
     </div>
   </div>
 
-  {{-- Grafik Pie - Hanya ditampilkan jika anggaran sudah diinput --}}
+  {{-- Grafik Pie - Hanya ditampilkan jika data anggaran sudah tersedia --}}
   @if(isset($showPieChart) && $showPieChart)
   <div class="card mb-5">
     <div class="card-header">

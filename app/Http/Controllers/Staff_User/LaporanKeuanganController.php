@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\Finance;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\MessageBag;
 
 class LaporanKeuanganController extends Controller
 {
@@ -18,11 +19,13 @@ class LaporanKeuanganController extends Controller
         // Mulai query Finance
         $finances = Finance::query();
 
-        // Filter berdasarkan jenis aliran dana (in atau out)
+        // Filter berdasarkan jenis aliran dana (in, out, atau budget)
         if ($filter === 'in') {
             $finances->where('flow_type', 'in');
         } elseif ($filter === 'out') {
             $finances->where('flow_type', 'out');
+        } elseif ($filter === 'budget') {
+            $finances->where('flow_type', 'budget');
         }
 
         // Filter berdasarkan tahun (dari date)
@@ -30,18 +33,19 @@ class LaporanKeuanganController extends Controller
             $finances->whereYear('date', $year);
         }
 
-        // Ambil data dari database
-        $finances = $finances->get();
+        // Ambil data dari database dan eager load data pengeluaran terkait anggaran (jika ada)
+        $finances = $finances->with('expenses')->get();
 
         // Ambil daftar tahun yang tersedia untuk filter (dari date)
         $years = Finance::selectRaw('DISTINCT YEAR(date) as year')
-                        ->whereNotNull('date')
-                        ->orderBy('year', 'desc')
-                        ->pluck('year');
+                            ->whereNotNull('date')
+                            ->orderBy('year', 'desc')
+                            ->pluck('year');
 
         // Kembalikan ke view dengan data yang telah difilter
         return view('user_staff.keuangan.index', compact('finances', 'filter', 'years', 'year'));
     }
+
 
     public function create()
     {
@@ -64,38 +68,46 @@ class LaporanKeuanganController extends Controller
 
     public function store(Request $request)
     {
-        // Validasi semua data di dalam array 'finance'
+        // Ambil semua data finance yang masuk
+        $finance = $request->input('finance');
+        
+        // Hitung total pengeluaran yang dimasukkan
+        $budgetExpenses = $request->input('budget_expenses', []);
+        $totalExpense = array_sum(array_column($budgetExpenses, 'amount'));
+
+        // Ambil anggaran (amount) dari baris pertama finance
+        $budgetAmount = $finance[0]['amount'] ?? 0;
+
+        // Validasi jika total pengeluaran melebihi anggaran
+        if ($totalExpense > $budgetAmount) {
+            $errors = new MessageBag([
+                'budget_expenses' => 'Total pengeluaran tidak boleh melebihi jumlah anggaran.',
+            ]);
+
+            return redirect()->back()
+                ->withErrors($errors)
+                ->withInput();
+        }
+
+        // Validasi semua data dalam array 'finance'
         $validator = Validator::make($request->all(), [
             'finance' => 'required|array|min:1',
-            'finance.*.flow_type' => 'required|in:in,out',
+            'finance.*.flow_type' => 'required|in:in,budget',
             'finance.*.amount' => 'required|integer|min:1',
             'finance.*.date' => 'required|date_format:Y-m',
-            'finance.*.note' => [
-                function ($attribute, $value, $fail) use ($request) {
-                    // Ambil index saat ini, misal "finance.0.note" => ambil 0
-                    preg_match('/finance\.(\d+)\.note/', $attribute, $matches);
-                    $index = $matches[1] ?? null;
-        
-                    // Cek kalau index ditemukan
-                    if ($index !== null) {
-                        $manualNote = $request->input("finance.$index.note_manual");
-        
-                        if (empty($value) && empty($manualNote)) {
-                            $fail('Catatan wajib diisi (pilih salah satu atau isi manual).');
-                        }
-                    }
-                },
-            ],
+            'finance.*.note' => 'nullable|string',
+            'budget_expenses' => 'nullable|array',
+            'budget_expenses.*.description' => 'required|string',
+            'budget_expenses.*.amount' => 'required|integer|min:1',
         ], [
             'finance.required' => 'Minimal satu baris data harus diisi.',
             'finance.*.flow_type.required' => 'Aliran dana wajib diisi.',
-            'finance.*.flow_type.in' => 'Aliran dana harus berupa pemasukan atau pengeluaran.',
             'finance.*.amount.required' => 'Jumlah wajib diisi.',
-            'finance.*.amount.integer' => 'Jumlah harus berupa angka bulat.',
-            'finance.*.amount.min' => 'Jumlah minimal adalah 1.',
             'finance.*.date.required' => 'Periode wajib diisi.',
-            'finance.*.date.date_format' => 'Format periode harus YYYY-MM.',
             'finance.*.note.required' => 'Catatan wajib diisi.',
+            'budget_expenses.*.description.required' => 'Deskripsi pengeluaran wajib diisi.',
+            'budget_expenses.*.amount.required' => 'Jumlah pengeluaran wajib diisi.',
+            'budget_expenses.*.amount.min' => 'Jumlah pengeluaran minimal adalah 1.',
         ]);
 
         if ($validator->fails()) {
@@ -104,18 +116,27 @@ class LaporanKeuanganController extends Controller
                 ->withInput();
         }
 
-        // Simpan setiap baris data
-        foreach ($request->finance as $data) {
-            $note = $data['note_manual'] ?? $data['note'] ?? null;
+        // Simpan data anggaran
+        $financeRecord = Finance::create([
+            'flow_type' => $finance[0]['flow_type'],
+            'amount' => $finance[0]['amount'],
+            'date' => $finance[0]['date'] . '-01', // Default tanggal agar valid sebagai `date`
+            'note' => $finance[0]['note'] ?? null,
+        ]);
 
-            Finance::create([
-                'flow_type' => $data['flow_type'],
-                'amount' => $data['amount'],
-                'date' => $data['date'] . '-01', // Tambah tanggal default agar valid sebagai `date`
-                'note' => $note,
-            ]);
+        // Simpan data pengeluaran yang terkait dengan anggaran
+        if ($totalExpense > 0) {
+            foreach ($budgetExpenses as $expense) {
+                $financeRecord->expenses()->create([
+                    'description' => $expense['description'],
+                    'amount' => $expense['amount'],
+                ]);
+            }
         }
+
         return redirect()->route('keuangan.staffIndex')->with('success', 'Data keuangan berhasil disimpan.');
     }
+
+
 
 }
