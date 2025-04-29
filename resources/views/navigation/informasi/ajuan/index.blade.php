@@ -5,7 +5,7 @@
 @section('content')
 <section class="">
   <div class="card-body">
-    <h4 class="card-title mb-4">
+    <h4 class="card-title mb-4 fs-2">
       @switch(request()->segment(2))
         @case('tenant')
           Syarat & Ketentuan Pengajuan Tenant
@@ -31,8 +31,8 @@
 
       {{-- Dokumen yang diperlukan --}}
       <div class="accordion-item">
-        <h2 class="accordion-header" id="headingOne">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+        <h2 class="accordion-header" id="headingOne" style="margin: 0; padding: 0;">
+          <button class="accordion-button collapsed" style="padding-top: 5px; padding-bottom: 5px;" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
             Dokumen yang Diperlukan
           </button>
         </h2>
@@ -63,8 +63,8 @@
       {{-- Kategori (khusus tenant) --}}
       @if (request()->segment(2) == 'tenant')
       <div class="accordion-item">
-        <h2 class="accordion-header" id="headingTwo">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+        <h2 class="accordion-header" id="headingTwo" style="margin: 0; padding: 0;">
+          <button class="accordion-button collapsed" style="padding-top: 5px; padding-bottom: 5px;" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
             Kategori Tenant
           </button>
         </h2>
@@ -83,8 +83,8 @@
 
       {{-- Cara Pendaftaran (sama untuk semua route) --}}
       <div class="accordion-item">
-        <h2 class="accordion-header" id="headingThree">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+        <h2 class="accordion-header" id="headingThree" style="margin: 0; padding: 0;">
+          <button class="accordion-button collapsed" style="padding-top: 5px; padding-bottom: 5px;" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
             Cara Pendaftaran
           </button>
         </h2>

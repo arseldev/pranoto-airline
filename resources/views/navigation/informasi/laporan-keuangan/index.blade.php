@@ -2,9 +2,18 @@
 
 @section('title', 'Laporan Keuangan | APT PRANOTO')
 
+@push('styles')
+    <style>
+      .select-filter {
+        width: 150px;
+      }
+
+    </style>
+@endpush
+
 @section('content')
-<section class="container py-5">
-  <h2 class="mb-4">Laporan Keuangan Bandara A.P.T. Pranoto</h2>
+<section class="container pb-5">
+  <h2 class="mb-4 fw-bold fs-1">Laporan Keuangan Bandara A.P.T. Pranoto</h2>
 
   {{-- Filter Form untuk Grafik Batang --}}
   <div class="card mb-5">
@@ -19,7 +28,7 @@
             <label for="jenis_filter" class="col-form-label">Pertumbuhan</label>
           </div>
           <div class="col-auto">
-            <select name="jenis_filter" id="jenis_filter" class="form-select">
+            <select name="jenis_filter" id="jenis_filter" class="form-select select-filter">
               <option value="bulan" {{ ($jenis_filter == 'bulan' || !$jenis_filter) ? 'selected' : '' }}>Per Bulan</option>
               <option value="tahun" {{ $jenis_filter == 'tahun' ? 'selected' : '' }}>Per Tahun</option>
             </select>
@@ -29,7 +38,7 @@
           <div class="col-auto" id="tahun-container" style="{{ $jenis_filter == 'tahun' ? 'display:none;' : '' }}">
             <div class="d-flex gap-2">
               <label for="tahunSelect" class="col-form-label">Tahun</label>
-              <select name="tahun" id="tahunSelect" class="form-select">
+              <select name="tahun" id="tahunSelect" class="form-select select-filter">
                 @foreach ($years as $year)
                   <option value="{{ $year }}" {{ $filterTahun == $year ? 'selected' : '' }}>{{ $year }}</option>
                 @endforeach
@@ -79,7 +88,7 @@
             <label for="tahunPieSelect" class="col-form-label">Pilih Tahun</label>
           </div>
           <div class="col-auto">
-            <select name="tahun_pie" id="tahunPieSelect" class="form-select">
+            <select name="tahun_pie" id="tahunPieSelect" class="form-select select-filter" >
               @foreach ($years as $year)
                 <option value="{{ $year }}" {{ $filterTahunPie == $year ? 'selected' : '' }}>{{ $year }}</option>
               @endforeach

@@ -3,9 +3,9 @@
 @section('title', 'Profil Bandara | APT PRANOTO')
 
 @section('content')
-<section class="py-5">
+<section class="pb-5">
   <div class="container">
-    <h2 class="mb-4 fw-bold">Profil Bandara A.P.T. Pranoto Samarinda</h2>
+    <h2 class="mb-4 fw-bold fs-1">Profil Bandara A.P.T. Pranoto Samarinda</h2>
 
     <div class="mb-4">
       <h4>Sejarah dan Letak Geografis</h4>

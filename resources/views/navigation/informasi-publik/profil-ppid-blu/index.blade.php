@@ -3,8 +3,8 @@
 @section('title', 'Profil PPID BLU | APT PRANOTO')
 
 @section('content')
-<section class="container py-5">
-  <h2 class="mb-4">Profil PPID BLU Kantor UPBU Kelas I A.P.T Pranoto</h2>
+<section class="container pb-5">
+  <h2 class="mb-4 fw-bold fs-1">Profil PPID BLU Kantor UPBU Kelas I A.P.T Pranoto</h2>
 
   <div class="mb-4">
     <p>

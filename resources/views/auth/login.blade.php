@@ -10,9 +10,9 @@
   @endsection
 
   @section('content')
-    <div class="account-pages pt-sm-5 mt-5">
-      <div class="container mt-4">
-        <div class="row justify-content-center">
+  <div class="account-pages vh-100 d-flex align-items-center">
+    <div class="container">
+      <div class="row justify-content-center">
           <div class="col-md-8 col-lg-6 col-xl-5">
             <div class="card overflow-hidden">
               <div class="bg-primary bg-soft">
